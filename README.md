@@ -2,7 +2,7 @@
 
 A modern, serverless blog platform built with vanilla JavaScript and Turso SQLite.
 
-**Live Site:** [http://blogs.sagarmalla.info.np/](http://blogs.sagarmalla.info.np/)
+**Live Site:** [https://blogs.sagarmalla.info.np/](https://blogs.sagarmalla.info.np/)
 
 ## Features
 
