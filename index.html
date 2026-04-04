@@ -1,0 +1,4185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sagar's Blogs</title>
+    <meta name="description" content="A modern serverless blog powered by Turso SQLite">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+   INKWELL BLOG — COMPLETE DESIGN SYSTEM
+   CSS Custom Properties, Reset, Typography, Components,
+   Dark Mode, Skeleton Loaders, Responsive Layout
+   ============================================================ */
+
+        /* ---------- Theme Variables ---------- */
+        :root {
+            --bg-primary: #f7f8fc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef1f6;
+            --bg-input: #f1f4f9;
+            --text-primary: #0f172a;
+            --text-secondary: #4b5563;
+            --text-tertiary: #9ca3af;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-soft: #eef2ff;
+            --accent-glow: rgba(99, 102, 241, 0.13);
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --success: #10b981;
+            --success-soft: #d1fae5;
+            --warning: #f59e0b;
+            --warning-soft: #fef3c7;
+            --danger: #ef4444;
+            --danger-soft: #fee2e2;
+            --info: #3b82f6;
+            --info-soft: #dbeafe;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.10);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --transition: 0.22s cubic-bezier(.4, 0, .2, 1);
+            --nav-h: 68px;
+            --max-w: 1200px;
+            --skel-base: #e5e7eb;
+            --skel-shine: #f9fafb;
+            --nav-bg: rgba(255, 255, 255, 0.82);
+            --hero-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --card-hover-y: -6px;
+            --quill-bg: #ffffff;
+            --quill-text: #0f172a;
+            --quill-border: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0c1222;
+            --bg-secondary: #141c2e;
+            --bg-tertiary: #1b2540;
+            --bg-input: #1b2540;
+            --text-primary: #e8ecf4;
+            --text-secondary: #8e9bba;
+            --text-tertiary: #4e5e80;
+            --accent: #818cf8;
+            --accent-hover: #a5b4fc;
+            --accent-soft: rgba(129, 140, 248, 0.12);
+            --accent-glow: rgba(129, 140, 248, 0.18);
+            --border: #1f2d47;
+            --border-light: #172035;
+            --success-soft: rgba(16, 185, 129, 0.14);
+            --warning-soft: rgba(245, 158, 11, 0.14);
+            --danger-soft: rgba(239, 68, 68, 0.14);
+            --info-soft: rgba(59, 130, 246, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.40);
+            --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.45);
+            --skel-base: #1b2540;
+            --skel-shine: #243352;
+            --nav-bg: rgba(12, 18, 34, 0.82);
+            --hero-grad: linear-gradient(135deg, #4338ca 0%, #7c3aed 50%, #be185d 100%);
+            --card-hover-y: -4px;
+            --quill-bg: #141c2e;
+            --quill-text: #e8ecf4;
+            --quill-border: #1f2d47;
+        }
+
+        /* ---------- Reset ---------- */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.65;
+            transition: background var(--transition), color var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        img {
+            max-width: 100%;
+            display: block
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color var(--transition)
+        }
+
+        a:hover {
+            color: var(--accent-hover)
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none
+        }
+
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: inherit
+        }
+
+        ul,
+        ol {
+            list-style: none
+        }
+
+        /* ---------- Scrollbar ---------- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 99px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary)
+        }
+
+        /* ---------- Typography ---------- */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--text-primary)
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem)
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem)
+        }
+
+        h3 {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem)
+        }
+
+        p {
+            color: var(--text-secondary)
+        }
+
+        /* ---------- Layout ---------- */
+        .container {
+            width: 100%;
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 24px
+        }
+
+        .page-padding {
+            padding-top: calc(var(--nav-h) + 32px);
+            padding-bottom: 64px;
+            min-height: 80vh
+        }
+
+        /* ---------- Navbar ---------- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-h);
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px) saturate(1.8);
+            -webkit-backdrop-filter: blur(16px) saturate(1.8);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            transition: background var(--transition), border-color var(--transition)
+        }
+
+        .nav-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: opacity var(--transition)
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent)
+        }
+
+        .nav-brand:hover {
+            opacity: .8;
+            color: var(--text-primary)
+        }
+
+        .nav-brand svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent)
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .nav-links a,
+        .nav-links button {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: .875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            text-decoration: none;
+            white-space: nowrap
+        }
+
+        .nav-links a:hover,
+        .nav-links button:hover {
+            background: var(--accent-soft);
+            color: var(--accent)
+        }
+
+        .nav-links a.active {
+            background: var(--accent-soft);
+            color: var(--accent)
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+            color: var(--text-secondary)
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-soft);
+            color: var(--accent)
+        }
+
+        .theme-toggle svg {
+            width: 28px;
+            height: 28px
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary)
+        }
+
+        .mobile-menu-btn svg {
+            width: 22px;
+            height: 22px
+        }
+
+        @media(max-width:768px) {
+            .nav-links {
+                position: fixed;
+                top: var(--nav-h);
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                padding: 16px;
+                gap: 4px;
+                transform: translateY(-120%);
+                opacity: 0;
+                transition: all .3s ease;
+                pointer-events: none
+            }
+
+            .nav-links.open {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: auto
+            }
+
+            .nav-links a,
+            .nav-links button {
+                width: 100%;
+                text-align: left;
+                padding: 12px 16px
+            }
+
+            .mobile-menu-btn {
+                display: flex
+            }
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            background: var(--hero-grad);
+            padding: 100px 24px 80px;
+            margin-top: var(--nav-h);
+            text-align: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            color: #fff;
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            margin-bottom: 16px;
+            position: relative
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            max-width: 600px;
+            margin: 0 auto 32px;
+            position: relative
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all var(--transition);
+            position: relative;
+            backdrop-filter: blur(8px)
+        }
+
+        .hero-cta:hover {
+            background: rgba(255, 255, 255, 0.28);
+            color: #fff;
+            transform: translateY(-2px)
+        }
+
+        /* ---------- Section Titles ---------- */
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px
+        }
+
+        .section-title h2 {
+            font-size: 1.5rem
+        }
+
+        .section-title .filter-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        /* ---------- Search ---------- */
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            width: 100%
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: .875rem;
+            color: var(--text-primary);
+            transition: all var(--transition);
+            outline: none
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow)
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-tertiary)
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-tertiary);
+            pointer-events: none
+        }
+
+        .search-box .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            pointer-events: auto;
+            border: none;
+            padding: 0
+        }
+
+        .search-box .search-clear:hover {
+            background: var(--danger-soft);
+            color: var(--danger)
+        }
+
+        .search-box .search-clear svg {
+            position: static;
+            transform: none;
+            width: 14px;
+            height: 14px;
+            pointer-events: none
+        }
+
+        .search-box input:not(.has-value)~.search-clear,
+        .search-box input:not([value*=""])~.search-clear {
+            display: none
+        }
+
+        .search-box input.has-value~.search-clear {
+            display: flex
+        }
+
+        /* ---------- Password Input with Toggle ---------- */
+        .password-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center
+        }
+
+        .password-input-wrap .form-input {
+            padding-right: 40px;
+            width: 100%
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            background: none;
+            border: none;
+            padding: 0;
+            transition: color var(--transition)
+        }
+
+        .password-toggle:hover {
+            color: var(--text-secondary)
+        }
+
+        .password-toggle svg {
+            width: 18px;
+            height: 18px;
+            pointer-events: none
+        }
+
+        /* ---------- Category Badges ---------- */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: .75rem;
+            font-weight: 600;
+            letter-spacing: .02em;
+            text-transform: uppercase
+        }
+
+        .badge-tech {
+            background: var(--info-soft);
+            color: var(--info)
+        }
+
+        .badge-design {
+            background: #fce7f3;
+            color: #be185d
+        }
+
+        [data-theme="dark"] .badge-design {
+            background: rgba(190, 24, 93, 0.14);
+            color: #f9a8d4
+        }
+
+        .badge-lifestyle {
+            background: var(--success-soft);
+            color: var(--success)
+        }
+
+        .badge-business {
+            background: var(--warning-soft);
+            color: var(--warning)
+        }
+
+        .badge-general {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary)
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            font-size: .7rem
+        }
+
+        .badge-published {
+            background: var(--success-soft);
+            color: var(--success)
+        }
+
+        .badge-draft {
+            background: var(--warning-soft);
+            color: var(--warning)
+        }
+
+        /* ---------- Post Grid ---------- */
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px
+        }
+
+        @media(max-width:480px) {
+            .post-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* ---------- Featured Post ---------- */
+        .featured-post {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 0;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition);
+            border: 1px solid var(--border-light);
+            margin-bottom: 40px
+        }
+
+        .featured-post:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px)
+        }
+
+        .featured-post .fp-image {
+            height: 100%;
+            min-height: 320px;
+            background-size: cover;
+            background-position: center;
+            position: relative
+        }
+
+        .featured-post .fp-image::after {
+            content: 'FEATURED';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--accent);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .06em
+        }
+
+        .featured-post .fp-content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px
+        }
+
+        .featured-post .fp-content h2 {
+            font-size: 1.75rem;
+            line-height: 1.3
+        }
+
+        .featured-post .fp-content h2 a {
+            color: var(--text-primary);
+            text-decoration: none
+        }
+
+        .featured-post .fp-content h2 a:hover {
+            color: var(--accent)
+        }
+
+        .featured-post .fp-content p {
+            color: var(--text-secondary);
+            font-size: .95rem;
+            line-height: 1.7
+        }
+
+        .featured-post .fp-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: .8rem;
+            color: var(--text-tertiary)
+        }
+
+        .featured-post .fp-meta svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .featured-post .fp-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        @media(max-width:768px) {
+            .featured-post {
+                grid-template-columns: 1fr
+            }
+
+            .featured-post .fp-image {
+                min-height: 220px
+            }
+
+            .featured-post .fp-content {
+                padding: 24px
+            }
+        }
+
+        /* ---------- Post Card ---------- */
+        .post-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(var(--card-hover-y))
+        }
+
+        .post-card .card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative
+        }
+
+        .post-card .card-image .badge {
+            position: absolute;
+            top: 14px;
+            left: 14px
+        }
+
+        .post-card .card-body {
+            padding: 22px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .post-card .card-body h3 {
+            font-size: 1.15rem;
+            line-height: 1.35
+        }
+
+        .post-card .card-body h3 a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color var(--transition)
+        }
+
+        .post-card .card-body h3 a:hover {
+            color: var(--accent)
+        }
+
+        .post-card .card-body .excerpt {
+            color: var(--text-secondary);
+            font-size: .88rem;
+            line-height: 1.65;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .post-card .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: .78rem;
+            color: var(--text-tertiary);
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+            margin-top: auto
+        }
+
+        .post-card .card-meta svg {
+            width: 13px;
+            height: 13px
+        }
+
+        .post-card .card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        /* ---------- Post Reading View ---------- */
+        .post-view {
+            max-width: 780px;
+            margin: 0 auto;
+            padding-top: calc(var(--nav-h) + 48px);
+            padding-bottom: 80px
+        }
+
+        .post-view .post-header {
+            text-align: center;
+            margin-bottom: 48px
+        }
+
+        .post-view .post-header .badge {
+            margin-bottom: 16px
+        }
+
+        .post-view .post-header h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 20px;
+            line-height: 1.2
+        }
+
+        .post-view .post-header .post-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            color: var(--text-tertiary);
+            font-size: .85rem
+        }
+
+        .post-view .post-header .post-meta svg {
+            width: 15px;
+            height: 15px
+        }
+
+        .post-view .post-header .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .post-view .post-cover {
+            width: 100%;
+            height: auto;
+            max-height: 460px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            margin-bottom: 48px
+        }
+
+        .post-view .post-body {
+            font-size: 1.08rem;
+            line-height: 1.85;
+            color: var(--text-secondary)
+        }
+
+        .post-view .post-body h1,
+        .post-view .post-body h2,
+        .post-view .post-body h3 {
+            margin: 36px 0 16px;
+            color: var(--text-primary)
+        }
+
+        .post-view .post-body p {
+            margin-bottom: 20px
+        }
+
+        .post-view .post-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 16px 24px;
+            margin: 24px 0;
+            background: var(--accent-soft);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-style: italic;
+            color: var(--text-secondary)
+        }
+
+        .post-view .post-body pre {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: .88rem;
+            margin: 24px 0;
+            border: 1px solid var(--border)
+        }
+
+        .post-view .post-body code {
+            font-family: var(--font-mono);
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: .88em
+        }
+
+        .post-view .post-body pre code {
+            background: none;
+            padding: 0
+        }
+
+        .post-view .post-body img {
+            max-width: 100%;
+            border-radius: var(--radius-md);
+            margin: 24px 0
+        }
+
+        .post-view .post-body a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px
+        }
+
+        .post-view .post-body ul,
+        .post-view .post-body ol {
+            margin: 16px 0 16px 28px
+        }
+
+        .post-view .post-body li {
+            margin-bottom: 8px
+        }
+
+        .post-view .post-body ul li {
+            list-style: disc
+        }
+
+        .post-view .post-body ol li {
+            list-style: decimal
+        }
+
+        .post-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            gap: 16px
+        }
+
+        .post-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            max-width: 48%
+        }
+
+        .post-nav a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft)
+        }
+
+        .post-nav a svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0
+        }
+
+        .post-nav-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        /* ---------- Admin Layout ---------- */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 0;
+            min-height: calc(100vh - var(--nav-h))
+        }
+
+        .admin-sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 28px 0;
+            position: sticky;
+            top: var(--nav-h);
+            height: calc(100vh - var(--nav-h))
+        }
+
+        .admin-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 24px;
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            border-left: 3px solid transparent;
+            text-decoration: none
+        }
+
+        .admin-sidebar a:hover {
+            background: var(--accent-soft);
+            color: var(--accent)
+        }
+
+        .admin-sidebar a.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-left-color: var(--accent);
+            font-weight: 600
+        }
+
+        .admin-sidebar a svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .admin-sidebar .sidebar-section {
+            padding: 0 24px;
+            margin-bottom: 12px;
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-tertiary)
+        }
+
+        .admin-content {
+            padding: 32px;
+            overflow-y: auto
+        }
+
+        /* Post Hero with Background Image */
+        .post-hero-bg {
+            position: relative;
+            min-height: 70vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 24px 60px;
+            margin: calc(-1 * var(--nav-h)) calc(-50vw + 50%);
+            padding-top: calc(var(--nav-h) + 60px);
+            width: 100vw;
+            left: 0;
+            right: 0
+        }
+
+        .post-hero-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(1px)
+        }
+
+        .post-hero-bg-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            color: #fff;
+            width: 100%
+        }
+
+        .post-back-link-bg {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            transition: color 0.2s ease;
+            white-space: nowrap
+        }
+
+        .post-back-link-bg:hover {
+            color: #fff
+        }
+
+        .post-back-link-bg svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0
+        }
+
+        .post-title-bg {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin: 12px 0 20px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4)
+        }
+
+        .post-meta-bg {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 16px 24px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85)
+        }
+
+        .post-meta-bg span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap
+        }
+
+        .post-meta-bg svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0
+        }
+
+        .post-body-wrapper {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px
+        }
+
+        /* Go to Top Floating Button */
+        .go-to-top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 20px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 6px 24px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border: none
+        }
+
+        .go-to-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0)
+        }
+
+        .go-to-top-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl)
+        }
+
+        /* Admin Sidebar Mobile Toggle */
+        .admin-sidebar-toggle-inline {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition)
+        }
+
+        .admin-sidebar-toggle-inline:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .admin-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease
+        }
+
+        .admin-sidebar-overlay.visible {
+            display: block;
+            opacity: 1
+        }
+
+        @media(max-width:860px) {
+            .admin-layout {
+                grid-template-columns: 1fr
+            }
+
+            .admin-sidebar {
+                position: fixed;
+                top: var(--nav-h);
+                left: 0;
+                bottom: 0;
+                width: 260px;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                display: block;
+                height: calc(100vh - var(--nav-h));
+                box-shadow: var(--shadow-xl)
+            }
+
+            .admin-sidebar.open {
+                transform: translateX(0)
+            }
+
+            .admin-sidebar-toggle-inline {
+                display: flex !important
+            }
+
+            .admin-content {
+                padding: 24px 16px
+            }
+        }
+
+        /* ---------- Stat Cards ---------- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: all var(--transition)
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px)
+        }
+
+        .stat-card .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px
+        }
+
+        .stat-card .stat-icon svg {
+            width: 22px;
+            height: 22px
+        }
+
+        .stat-card .stat-icon.blue {
+            background: var(--info-soft);
+            color: var(--info)
+        }
+
+        .stat-card .stat-icon.green {
+            background: var(--success-soft);
+            color: var(--success)
+        }
+
+        .stat-card .stat-icon.amber {
+            background: var(--warning-soft);
+            color: var(--warning)
+        }
+
+        .stat-card .stat-icon.purple {
+            background: var(--accent-soft);
+            color: var(--accent)
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1
+        }
+
+        .stat-card .stat-label {
+            font-size: .82rem;
+            color: var(--text-tertiary);
+            margin-top: 6px
+        }
+
+        /* ---------- Data Table ---------- */
+        .data-table-wrap {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            overflow: hidden
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        .data-table thead {
+            background: var(--bg-tertiary)
+        }
+
+        .data-table th {
+            padding: 14px 18px;
+            text-align: left;
+            font-size: .78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .data-table td {
+            padding: 14px 18px;
+            font-size: .88rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .data-table tr:hover td {
+            background: var(--accent-soft)
+        }
+
+        .data-table .td-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 6px
+        }
+
+        .table-actions button {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            color: var(--text-tertiary)
+        }
+
+        .table-actions button:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary)
+        }
+
+        .table-actions button.danger:hover {
+            background: var(--danger-soft);
+            color: var(--danger)
+        }
+
+        .table-actions button svg {
+            width: 16px;
+            height: 16px
+        }
+
+        @media(max-width:640px) {
+            .data-table-wrap {
+                overflow-x: auto
+            }
+
+            .data-table {
+                min-width: 600px
+            }
+        }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: .875rem;
+            font-weight: 600;
+            transition: all var(--transition);
+            white-space: nowrap;
+            border: 1px solid transparent;
+            outline: none
+        }
+
+        .btn:focus-visible {
+            box-shadow: 0 0 0 3px var(--accent-glow)
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent)
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md)
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border)
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft)
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger)
+        }
+
+        .btn-danger:hover {
+            opacity: .9;
+            transform: translateY(-1px)
+        }
+
+        .btn-ghost {
+            color: var(--text-secondary);
+            padding: 8px 14px
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary)
+        }
+
+        .btn-sm {
+            padding: 7px 14px;
+            font-size: .8rem
+        }
+
+        .btn-lg {
+            padding: 14px 32px;
+            font-size: 1rem
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .btn-sm svg {
+            width: 15px;
+            height: 15px
+        }
+
+        /* ---------- Forms ---------- */
+        .form-group {
+            margin-bottom: 20px
+        }
+
+        .form-group label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 7px
+        }
+
+        .form-group .helper {
+            font-size: .75rem;
+            color: var(--text-tertiary);
+            margin-top: 5px
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 11px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: .9rem;
+            color: var(--text-primary);
+            transition: all var(--transition);
+            outline: none
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            background: var(--bg-secondary)
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-tertiary)
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        @media(max-width:540px) {
+            .form-row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .form-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            max-width: 520px;
+            margin: 0 auto
+        }
+
+        .form-card h2 {
+            margin-bottom: 8px;
+            font-size: 1.5rem
+        }
+
+        .form-card .form-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-size: .92rem
+        }
+
+        /* ---------- Quill Editor Overrides ---------- */
+        .ql-toolbar.ql-snow {
+            border: 1.5px solid var(--quill-border) !important;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+            background: var(--bg-tertiary) !important
+        }
+
+        .ql-container.ql-snow {
+            border: 1.5px solid var(--quill-border) !important;
+            border-top: none !important;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important;
+            background: var(--quill-bg) !important;
+            font-family: var(--font-sans) !important;
+            font-size: 1rem !important;
+            min-height: 300px
+        }
+
+        .ql-editor {
+            color: var(--quill-text) !important;
+            min-height: 300px
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--text-tertiary) !important;
+            font-style: normal !important
+        }
+
+        .ql-snow .ql-stroke {
+            stroke: var(--text-secondary) !important
+        }
+
+        .ql-snow .ql-fill,
+        .ql-snow .ql-stroke.ql-fill {
+            fill: var(--text-secondary) !important
+        }
+
+        .ql-snow .ql-picker-label {
+            color: var(--text-secondary) !important
+        }
+
+        .ql-snow .ql-picker-options {
+            background: var(--bg-secondary) !important;
+            border-color: var(--border) !important;
+            border-radius: var(--radius-sm) !important
+        }
+
+        /* ---------- Modal ---------- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            max-width: 480px;
+            width: 100%;
+            padding: 32px;
+            transform: translateY(16px) scale(.97);
+            transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+            position: relative
+        }
+
+        .modal-overlay.visible .modal-box {
+            transform: translateY(0) scale(1)
+        }
+
+        .modal-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px
+        }
+
+        .modal-box p {
+            color: var(--text-secondary);
+            font-size: .9rem;
+            margin-bottom: 24px;
+            line-height: 1.6
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            transition: all var(--transition)
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary)
+        }
+
+        .modal-close svg {
+            width: 18px;
+            height: 18px
+        }
+
+        /* ---------- Toast ---------- */
+        .toast-container {
+            position: fixed;
+            top: calc(var(--nav-h) + 16px);
+            right: 24px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            pointer-events: auto;
+            transform: translateX(120%);
+            animation: toastIn .35s cubic-bezier(.4, 0, .2, 1) forwards;
+            max-width: 380px
+        }
+
+        .toast.removing {
+            animation: toastOut .3s ease forwards
+        }
+
+        .toast svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success)
+        }
+
+        .toast.success svg {
+            color: var(--success)
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger)
+        }
+
+        .toast.error svg {
+            color: var(--danger)
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning)
+        }
+
+        .toast.warning svg {
+            color: var(--warning)
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--info)
+        }
+
+        .toast.info svg {
+            color: var(--info)
+        }
+
+        @keyframes toastIn {
+            to {
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes toastOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0
+            }
+        }
+
+        /* ---------- Skeleton Loader ---------- */
+        .skeleton {
+            border-radius: var(--radius-sm);
+            background: linear-gradient(90deg, var(--skel-base) 25%, var(--skel-shine) 50%, var(--skel-base) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .skel-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-light)
+        }
+
+        .skel-card .skel-img {
+            height: 200px
+        }
+
+        .skel-card .skel-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .skel-card .skel-line {
+            height: 14px;
+            border-radius: 6px
+        }
+
+        .skel-card .skel-line.w60 {
+            width: 60%
+        }
+
+        .skel-card .skel-line.w80 {
+            width: 80%
+        }
+
+        .skel-card .skel-line.w40 {
+            width: 40%
+        }
+
+        .skel-card .skel-title {
+            height: 22px;
+            width: 85%;
+            border-radius: 6px
+        }
+
+        .skel-featured {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            margin-bottom: 40px
+        }
+
+        .skel-featured .skel-img {
+            min-height: 320px
+        }
+
+        .skel-featured .skel-body {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center
+        }
+
+        @media(max-width:768px) {
+            .skel-featured {
+                grid-template-columns: 1fr
+            }
+
+            .skel-featured .skel-img {
+                min-height: 200px
+            }
+        }
+
+        /* ---------- Pagination ---------- */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 40px
+        }
+
+        .pagination button {
+            min-width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .pagination button:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft)
+        }
+
+        .pagination button.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent)
+        }
+
+        .pagination button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .pagination button svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* ---------- Empty State ---------- */
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--text-tertiary)
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            opacity: .4
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px
+        }
+
+        .empty-state p {
+            font-size: .9rem;
+            margin-bottom: 24px
+        }
+
+        /* ---------- Footer ---------- */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 40px 24px;
+            text-align: center
+        }
+
+        .footer p {
+            font-size: .85rem;
+            color: var(--text-tertiary)
+        }
+
+        .footer a {
+            color: var(--accent)
+        }
+
+        /* ---------- Setup / Auth Pages ---------- */
+        .auth-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - var(--nav-h));
+            padding: 40px 24px
+        }
+
+        .setup-steps {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px
+        }
+
+        .setup-step {
+            flex: 1;
+            height: 4px;
+            border-radius: 99px;
+            background: var(--border)
+        }
+
+        .setup-step.done {
+            background: var(--accent)
+        }
+
+        /* ---------- Tab bar ---------- */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 24px
+        }
+
+        .tab-bar button {
+            padding: 12px 20px;
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all var(--transition)
+        }
+
+        .tab-bar button:hover {
+            color: var(--text-primary)
+        }
+
+        .tab-bar button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent)
+        }
+
+        /* ---------- Utilities ---------- */
+        .hidden {
+            display: none !important
+        }
+
+        .text-center {
+            text-align: center
+        }
+
+        .mb-4 {
+            margin-bottom: 16px
+        }
+
+        .mb-8 {
+            margin-bottom: 32px
+        }
+
+        .mt-4 {
+            margin-top: 16px
+        }
+
+        .flex {
+            display: flex
+        }
+
+        .flex-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .gap-2 {
+            gap: 8px
+        }
+
+        .gap-4 {
+            gap: 16px
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap
+        }
+
+        .w-full {
+            width: 100%
+        }
+
+        /* ---------- Transition for page changes ---------- */
+        .page-enter {
+            animation: pageIn .3s ease forwards
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#home" class="nav-brand">
+                <img src="assets/img/sagarmalla.gif" alt="Sagar's Blogs" class="brand-logo">
+                <span>Sagar's Blogs</span>
+            </a>
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <div class="nav-links" id="nav-links">
+                <a href="#home" id="nav-home">Home</a>
+                <a href="#about" id="nav-about">About</a>
+                <a href="#contact" id="nav-contact">Contact</a>
+                <a href="#admin/dashboard" id="nav-admin" class="hidden">Dashboard</a>
+                <a href="#login" id="nav-login">Login</a>
+                <button id="nav-logout" class="hidden" onclick="App.logout()">Logout</button>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    <svg id="icon-moon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN APP CONTAINER ========== -->
+    <main id="app"></main>
+
+    <!-- ========== TOAST NOTIFICATIONS ========== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ========== MODAL OVERLAY ========== -->
+    <div id="modal-overlay" class="modal-overlay" onclick="UI.closeModal(event)">
+        <div class="modal-box" id="modal-box"></div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <p>&copy; 2026 Sagar's Blogs. by <a href="https://sagarmalla.info.np" target="_blank" rel="noopener">Sagar
+                    Malla</a></p>
+        </div>
+    </footer>
+
+    <!-- ========== AOS Animation Library ========== -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- ========== Quill.js WYSIWYG Editor ========== -->
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+    <script>
+        /* ============================================================
+           INKWELL BLOG — APPLICATION JAVASCRIPT
+           Modular architecture using IIFE closures:
+             1. Icons     — SVG icon library
+             2. DB        — Turso HTTP API client
+             3. Auth      — Web Crypto authentication & RBAC
+             4. Router    — Hash-based client-side routing
+             5. UI        — Templates, DOM rendering, toasts, modals
+             6. EditorMod — Quill.js editor wrapper
+             7. App       — Main controller tying everything together
+           ============================================================ */
+
+        // ==========================================
+        // MODULE 1: Icons — SVG Icon Library
+        // ==========================================
+        const Icons = {
+            calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+            clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+            trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+            plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+            eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+            eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+            search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+            grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>',
+            fileText: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+            users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+            logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+            arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+            arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+            check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+            x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+            alertCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+            info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+            database: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+            chevLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>',
+            chevRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>',
+            inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+            key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78Zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+            tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+        };
+
+        // ==========================================
+        // MODULE 2: DB — Turso HTTP API Client
+        // ==========================================
+        /**
+         * Database module for communicating with Turso serverless SQLite.
+         *
+         * Turso HTTP API Pipeline (/v2/pipeline):
+         * ────────────────────────────────────────
+         * The pipeline endpoint allows batching multiple SQL statements
+         * in a single HTTP POST request. Each statement is wrapped in
+         * an "execute" request, and a "close" request ends the pipeline.
+         *
+         * Request structure:
+         *   POST {dbUrl}/v2/pipeline
+         *   Authorization: Bearer <token>
+         *   Content-Type: application/json
+         *   Body: {
+         *     "requests": [
+         *       { "type": "execute", "stmt": { "sql": "...", "args": [...] } },
+         *       { "type": "close" }
+         *     ]
+         *   }
+         *
+         * Each arg is typed: { type: "text"|"integer"|"float"|"null", value: "..." }
+         *
+         * Response structure:
+         *   {
+         *     "results": [
+         *       {
+         *         "type": "ok",
+         *         "response": {
+         *           "type": "execute",
+         *           "result": {
+         *             "cols": [{ "name": "...", "decltype": "..." }],
+         *             "rows": [[{ "type": "text", "value": "..." }, ...]],
+         *             "affected_row_count": 0,
+         *             "last_insert_rowid": null
+         *           }
+         *         }
+         *       },
+         *       { "type": "ok", "response": { "type": "close" } }
+         *     ]
+         *   }
+         *
+         * Security Model:
+         * ───────────────
+         * - readToken: A scoped token allowing only SELECT queries.
+         *   This token CAN be embedded in client-side code since it
+         *   provides read-only access to published content.
+         *
+         * - fullToken: A full-access token allowing INSERT, UPDATE, DELETE.
+         *   This token MUST NOT be hardcoded. Instead, the admin provides
+         *   it via the Settings UI, and it is stored in localStorage.
+         *   This means only authenticated admins on trusted devices have
+         *   write access.
+         */
+        const DB = (() => {
+            const CONFIG_KEY = 'inkwell_db_config';
+            // Hardcoded read-only credentials for public access
+            // Full token is still stored in localStorage for admin write operations
+            let config = {
+                url: 'https://testdb-smalla.aws-ap-south-1.turso.io',
+                readToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3NzUyODY0NDksImlkIjoiMDE5ZDU3NTAtODQwMS03ZGYwLWE0ODAtYThkYzE0ODI4YWNhIiwicmlkIjoiMzlkZjQ0YjMtMTVjMS00NjQ5LWFhMjQtMzBlNTM2YThhNzU2In0.WCBaiqrTykK-jL-Hd45di1wUh9c6e11CjpiaMLDfMWFf7g_Y5cRpG6GVW8HDgpqrO72GBo7aceJbCpr9sQCJBA',
+                fullToken: ''
+            };
+
+            function loadConfig() {
+                try {
+                    const s = localStorage.getItem(CONFIG_KEY);
+                    if (s) config = JSON.parse(s);
+                } catch (e) { /* ignore */ }
+            }
+
+            function saveConfig(url, readToken, fullToken) {
+                config = { url: url.replace(/\/+$/, ''), readToken, fullToken };
+                localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+            }
+
+            function isConfigured() { return !!(config.url && config.readToken); }
+            function hasWriteAccess() { return !!config.fullToken; }
+            function getConfig() { return { ...config }; }
+
+            /**
+             * Execute a single SQL statement against the Turso HTTP API.
+             *
+             * @param {string} sql   — The SQL query string (parameterized with ?)
+             * @param {Array}  args  — Positional arguments for the query
+             * @param {boolean} write — If true, uses the fullToken for write access
+             * @returns {Promise<{cols: string[], rows: Object[], affected: number, lastId: number|null}>}
+             *
+             * Internally, this builds a Turso pipeline request with a single
+             * "execute" statement followed by a "close" to end the connection.
+             * Arguments are converted from JS primitives to Turso's typed format.
+             */
+            async function execute(sql, args = [], write = false) {
+                if (!isConfigured()) throw new Error('Database not configured. Go to Settings.');
+                const token = write ? config.fullToken : config.readToken;
+                if (write && !token) throw new Error('Write token not set. Add it in Settings.');
+
+                // Convert JavaScript primitives to Turso typed argument format.
+                // Turso expects each arg as an object with { type, value } where
+                // type is one of: "text", "integer", "float", "null", "blob"
+                const typedArgs = args.map(a => {
+                    if (a === null || a === undefined) return { type: 'null', value: null };
+                    if (typeof a === 'number') return Number.isInteger(a)
+                        ? { type: 'integer', value: String(a) }
+                        : { type: 'float', value: String(a) };
+                    return { type: 'text', value: String(a) };
+                });
+
+                // Build the pipeline request body.
+                // The pipeline consists of one "execute" request containing our SQL,
+                // and one "close" request to signal we're done with this connection.
+                const body = {
+                    requests: [
+                        { type: 'execute', stmt: { sql, args: typedArgs } },
+                        { type: 'close' }
+                    ]
+                };
+
+                const res = await fetch(`${config.url}/v2/pipeline`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (!res.ok) {
+                    const t = await res.text();
+                    throw new Error(`DB Error ${res.status}: ${t}`);
+                }
+
+                const data = await res.json();
+                // The pipeline returns an array of results matching our requests.
+                // results[0] corresponds to our "execute" request.
+                if (data.results?.[0]?.type === 'error') {
+                    throw new Error(data.results[0].error?.message || 'SQL execution error');
+                }
+
+                const result = data.results?.[0]?.response?.result;
+                return parseResult(result);
+            }
+
+            /**
+             * Parse Turso result object into a developer-friendly format.
+             * Converts rows from arrays of typed cells to plain JS objects
+             * keyed by column name. Also converts typed values back to
+             * native JS types (integer → Number, float → Number, text → String).
+             */
+            function parseResult(result) {
+                if (!result) return { cols: [], rows: [], affected: 0, lastId: null };
+                const colNames = (result.cols || []).map(c => c.name);
+                const rows = (result.rows || []).map(row => {
+                    const obj = {};
+                    row.forEach((cell, i) => {
+                        if (cell.type === 'null') obj[colNames[i]] = null;
+                        else if (cell.type === 'integer') obj[colNames[i]] = parseInt(cell.value, 10);
+                        else if (cell.type === 'float') obj[colNames[i]] = parseFloat(cell.value);
+                        else obj[colNames[i]] = cell.value;
+                    });
+                    return obj;
+                });
+                return {
+                    cols: colNames,
+                    rows,
+                    affected: result.affected_row_count || 0,
+                    lastId: result.last_insert_rowid ? parseInt(result.last_insert_rowid, 10) : null
+                };
+            }
+
+            /**
+             * Initialize the database schema.
+             * Creates the posts and admin tables if they don't already exist.
+             * This must be called with write access (fullToken).
+             */
+            async function initTables() {
+                await execute(`CREATE TABLE IF NOT EXISTS posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                slug TEXT UNIQUE NOT NULL,
+                content TEXT DEFAULT '',
+                excerpt TEXT DEFAULT '',
+                category TEXT DEFAULT 'General',
+                tags TEXT DEFAULT '',
+                status TEXT DEFAULT 'draft',
+                cover_image TEXT DEFAULT '',
+                created_at TEXT DEFAULT (datetime('now')),
+                updated_at TEXT DEFAULT (datetime('now'))
+            )`, [], true);
+                await execute(`CREATE TABLE IF NOT EXISTS admin (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT DEFAULT 'Author',
+                reset_token TEXT DEFAULT NULL
+            )`, [], true);
+            }
+
+            loadConfig();
+            return { execute, initTables, saveConfig, isConfigured, hasWriteAccess, getConfig, loadConfig };
+        })();
+
+
+        // ==========================================
+        // MODULE 3: Auth — Web Crypto Authentication
+        // ==========================================
+        /**
+         * Authentication module using the Web Crypto API for password hashing.
+         *
+         * Web Crypto API — Password Hashing with SHA-256:
+         * ────────────────────────────────────────────────
+         * The browser's built-in crypto.subtle API provides cryptographic
+         * primitives without requiring external libraries.
+         *
+         * Hashing Process:
+         *   1. Encode the plaintext password to bytes using TextEncoder
+         *      → TextEncoder.encode(password) returns Uint8Array
+         *   2. Compute SHA-256 digest using crypto.subtle.digest()
+         *      → Returns a Promise<ArrayBuffer> containing the 32-byte hash
+         *   3. Convert ArrayBuffer to a Uint8Array for iteration
+         *   4. Map each byte to a 2-character hex string (padded with '0')
+         *   5. Join all hex strings to produce the final 64-char hash
+         *
+         * Session Management:
+         *   Sessions are stored in localStorage as JSON with:
+         *   - user: { id, username, role }
+         *   - expiresAt: Unix timestamp (24h from creation)
+         *   On each auth check, expiry is validated. Expired sessions
+         *   are automatically cleared.
+         *
+         * Role-Based Access Control (RBAC):
+         *   Three roles: Admin, Editor, Author
+         *   - Admin: Full access (CRUD posts, manage users, settings)
+         *   - Editor: Can create/edit/delete posts
+         *   - Author: Can create own posts only
+         *
+         * Password Reset Flow:
+         *   1. User requests reset → generateResetToken(username)
+         *   2. A cryptographically random 64-char hex token is generated
+         *      using crypto.getRandomValues(Uint8Array(32))
+         *   3. Token is stored in the admin table's reset_token column
+         *   4. User navigates to #reset/<token> and provides new password
+         *   5. resetPassword(token, newPass) validates token and updates hash
+         */
+        const Auth = (() => {
+            const SESSION_KEY = 'inkwell_session';
+            const DURATION = 24 * 60 * 60 * 1000; // 24 hours in ms
+            let currentUser = null;
+
+            /**
+             * Hash a password string to SHA-256 hex.
+             *
+             * Step-by-step:
+             *   const encoder = new TextEncoder();
+             *   const data = encoder.encode("mypassword");
+             *   // data is Uint8Array: [109, 121, 112, 97, 115, ...]
+             *
+             *   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+             *   // hashBuffer is ArrayBuffer (32 bytes / 256 bits)
+             *
+             *   const hashArray = Array.from(new Uint8Array(hashBuffer));
+             *   // Convert to regular array: [91, 234, 12, ...]
+             *
+             *   const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+             *   // "5bea0c..." — 64 character hex string
+             */
+            async function hashPassword(password) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            /** Generate a cryptographically secure random 64-char hex token */
+            function generateToken() {
+                const arr = new Uint8Array(32);
+                crypto.getRandomValues(arr);
+                return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            async function createAdmin(username, password, role = 'Admin') {
+                const hash = await hashPassword(password);
+                await DB.execute('INSERT INTO admin (username, password_hash, role) VALUES (?, ?, ?)',
+                    [username, hash, role], true);
+            }
+
+            async function login(username, password) {
+                const hash = await hashPassword(password);
+                const r = await DB.execute(
+                    'SELECT id, username, role FROM admin WHERE username = ? AND password_hash = ?',
+                    [username, hash]);
+                if (!r.rows.length) throw new Error('Invalid username or password');
+                createSession(r.rows[0]);
+                return r.rows[0];
+            }
+
+            function createSession(user) {
+                const session = { user: { id: user.id, username: user.username, role: user.role }, expiresAt: Date.now() + DURATION };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+                currentUser = session.user;
+            }
+
+            function loadSession() {
+                try {
+                    const s = JSON.parse(localStorage.getItem(SESSION_KEY));
+                    if (!s || Date.now() > s.expiresAt) { logout(); return null; }
+                    currentUser = s.user;
+                    return s.user;
+                } catch { logout(); return null; }
+            }
+
+            function logout() {
+                localStorage.removeItem(SESSION_KEY);
+                currentUser = null;
+            }
+
+            function isAuthenticated() { loadSession(); return !!currentUser; }
+            function getUser() { loadSession(); return currentUser; }
+            function hasRole(roles) { return currentUser && roles.includes(currentUser.role); }
+
+            async function getUsers() { return DB.execute('SELECT id, username, role, reset_token FROM admin'); }
+            async function updateRole(id, role) { return DB.execute('UPDATE admin SET role = ? WHERE id = ?', [role, id], true); }
+            async function deleteUser(id) { return DB.execute('DELETE FROM admin WHERE id = ?', [id], true); }
+
+            async function generateResetToken(username) {
+                const token = generateToken();
+                const r = await DB.execute('UPDATE admin SET reset_token = ? WHERE username = ?', [token, username], true);
+                if (r.affected === 0) throw new Error('User not found');
+                return token;
+            }
+
+            async function resetPassword(token, newPass) {
+                const hash = await hashPassword(newPass);
+                const r = await DB.execute('UPDATE admin SET password_hash = ?, reset_token = NULL WHERE reset_token = ?', [hash, token], true);
+                if (r.affected === 0) throw new Error('Invalid or expired reset token');
+            }
+
+            async function changePassword(userId, oldPass, newPass) {
+                const oldH = await hashPassword(oldPass);
+                const c = await DB.execute('SELECT id FROM admin WHERE id = ? AND password_hash = ?', [userId, oldH]);
+                if (!c.rows.length) throw new Error('Current password is incorrect');
+                const newH = await hashPassword(newPass);
+                await DB.execute('UPDATE admin SET password_hash = ? WHERE id = ?', [newH, userId], true);
+            }
+
+            async function adminExists() {
+                try {
+                    const r = await DB.execute('SELECT COUNT(*) as count FROM admin');
+                    return r.rows[0]?.count > 0;
+                } catch { return false; }
+            }
+
+            loadSession();
+            return {
+                hashPassword, createAdmin, login, logout, isAuthenticated, getUser, hasRole,
+                getUsers, updateRole, deleteUser, generateResetToken, resetPassword,
+                changePassword, adminExists, loadSession
+            };
+        })();
+
+
+        // ==========================================
+        // MODULE 4: Router — Hash-Based SPA Router
+        // ==========================================
+        const Router = (() => {
+            const routes = [];
+            let notFoundFn = null;
+
+            /**
+             * Register a route with a pattern and handler.
+             * Patterns support dynamic segments: 'post/:slug', 'admin/edit/:id'
+             */
+            function on(pattern, handler, opts = {}) {
+                routes.push({ pattern, handler, opts });
+            }
+
+            function notFound(fn) { notFoundFn = fn; }
+
+            function navigate(path) { window.location.hash = '#' + path; }
+
+            /**
+             * Match a pattern against the current hash.
+             * Splits both by '/' and compares segment by segment.
+             * Dynamic segments (starting with ':') become named params.
+             * Returns null if no match, or an object of params if matched.
+             */
+            function matchRoute(pattern, hash) {
+                const pp = pattern.split('/'), hp = hash.split('/');
+                if (pp.length !== hp.length) return null;
+                const params = {};
+                for (let i = 0; i < pp.length; i++) {
+                    if (pp[i].startsWith(':')) params[pp[i].slice(1)] = decodeURIComponent(hp[i]);
+                    else if (pp[i] !== hp[i]) return null;
+                }
+                return params;
+            }
+
+            function resolve() {
+                const hash = window.location.hash.slice(1) || 'home';
+                // Scroll to top on route change
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                for (const r of routes) {
+                    const params = matchRoute(r.pattern, hash);
+                    if (params !== null) {
+                        // Auth guard: if route requires auth, check before calling handler
+                        if (r.opts.auth && !Auth.isAuthenticated()) {
+                            navigate('login');
+                            return;
+                        }
+                        if (r.opts.roles && !Auth.hasRole(r.opts.roles)) {
+                            UI.showToast('Insufficient permissions', 'error');
+                            navigate('admin/dashboard');
+                            return;
+                        }
+                        r.handler(params);
+                        // Update nav active state after route change
+                        if (typeof UI !== 'undefined' && UI.updateNav) {
+                            UI.updateNav();
+                        }
+                        // Refresh AOS animations for new content
+                        if (typeof AOS !== 'undefined') {
+                            setTimeout(() => {
+                                AOS.refresh();
+                                // Also trigger a scroll event to force AOS to check visibility
+                                window.dispatchEvent(new Event('scroll'));
+                            }, 150);
+                        }
+                        return;
+                    }
+                }
+                if (notFoundFn) notFoundFn();
+            }
+
+            window.addEventListener('hashchange', resolve);
+
+            return { on, notFound, navigate, resolve };
+        })();
+
+
+        // ==========================================
+        // MODULE 5: UI — Templates & DOM Rendering
+        // ==========================================
+        const UI = (() => {
+            const app = document.getElementById('app');
+            const toastContainer = document.getElementById('toast-container');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalBox = document.getElementById('modal-box');
+
+            // -- Utility Helpers --
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                // Handle SQLite datetime format: "2024-01-15 10:30:00"
+                // Convert to ISO format: "2024-01-15T10:30:00"
+                let isoStr = dateStr;
+                if (dateStr.includes(' ') && !dateStr.includes('T')) {
+                    isoStr = dateStr.replace(' ', 'T');
+                }
+                const d = new Date(isoStr);
+                if (isNaN(d.getTime())) return 'Invalid Date';
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+            function readTime(html) {
+                const text = html ? html.replace(/<[^>]*>/g, '') : '';
+                const words = text.split(/\s+/).filter(Boolean).length;
+                return Math.max(1, Math.ceil(words / 200));
+            }
+            function escapeHtml(str) {
+                const d = document.createElement('div');
+                d.textContent = str;
+                return d.innerHTML;
+            }
+            function categoryClass(cat) {
+                const map = { Technology: 'tech', Design: 'design', Lifestyle: 'lifestyle', Business: 'business' };
+                return map[cat] || 'general';
+            }
+            function coverUrl(img, i) {
+                if (img) return img;
+                return 'assets/img/fallback-image.png';
+            }
+
+            // -- Toast Notifications --
+            function showToast(msg, type = 'info', duration = 4000) {
+                const iconMap = { success: Icons.check, error: Icons.alertCircle, warning: Icons.alertCircle, info: Icons.info };
+                const el = document.createElement('div');
+                el.className = `toast ${type}`;
+                el.innerHTML = `${iconMap[type] || Icons.info}<span>${escapeHtml(msg)}</span>`;
+                toastContainer.appendChild(el);
+                setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 300); }, duration);
+            }
+
+            // -- Modal --
+            function showModal(title, message, actions = []) {
+                let actionsHtml = actions.map(a =>
+                    `<button class="btn ${a.class || 'btn-secondary'}" onclick="${a.onclick}">${a.label}</button>`
+                ).join('');
+                modalBox.innerHTML = `
+                <button class="modal-close" onclick="UI.closeModal()">${Icons.x}</button>
+                <h3>${escapeHtml(title)}</h3>
+                <p>${message}</p>
+                <div class="modal-actions">${actionsHtml}</div>`;
+                modalOverlay.classList.add('visible');
+            }
+            function closeModal(e) {
+                if (e && e.target && e.target !== modalOverlay) return;
+                modalOverlay.classList.remove('visible');
+            }
+
+            // -- Loaders --
+            function showSkeleton(type = 'grid') {
+                if (type === 'grid') {
+                    app.innerHTML = `
+                    <div class="container page-padding page-enter">
+                        <div class="skel-featured skeleton" style="height:320px;margin-bottom:40px;border-radius:var(--radius-lg)"></div>
+                        <div class="post-grid">
+                            ${Array(6).fill(`<div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line w60 skeleton"></div><div class="skel-title skeleton"></div><div class="skel-line w80 skeleton"></div><div class="skel-line w40 skeleton"></div></div></div>`).join('')}
+                        </div>
+                    </div>`;
+                } else if (type === 'post') {
+                    app.innerHTML = `
+                    <div class="post-view page-enter" style="padding:0 24px">
+                        <div class="post-header"><div class="skeleton" style="width:100px;height:24px;margin:0 auto 16px;border-radius:99px"></div><div class="skeleton" style="width:70%;height:40px;margin:0 auto 20px;border-radius:8px"></div><div class="skeleton" style="width:40%;height:16px;margin:0 auto;border-radius:8px"></div></div>
+                        <div class="skeleton" style="width:100%;height:360px;border-radius:var(--radius-lg);margin-bottom:48px"></div>
+                        <div style="display:flex;flex-direction:column;gap:14px">${Array(8).fill(`<div class="skeleton" style="height:16px;border-radius:6px"></div>`).join('')}<div class="skeleton" style="height:16px;width:60%;border-radius:6px"></div></div>
+                    </div>`;
+                } else if (type === 'table') {
+                    app.innerHTML = `
+                    <div class="page-enter">
+                        <div class="stats-grid" style="margin-bottom:32px">${Array(3).fill(`<div class="skeleton" style="height:110px;border-radius:var(--radius-md)"></div>`).join('')}</div>
+                        <div class="skeleton" style="height:400px;border-radius:var(--radius-md)"></div>
+                    </div>`;
+                }
+            }
+
+            // -- Page: Home --
+            function renderHomePage(posts, page, totalPages, query, category) {
+                const published = posts;
+                let featured = '';
+                let gridPosts = published;
+
+                if (page === 1 && !query && !category && published.length > 0) {
+                    const fp = published[0];
+                    featured = `
+                    <div class="featured-post">
+                        <div class="fp-image" style="background-image:url('${coverUrl(fp.cover_image, fp.id)}')"></div>
+                        <div class="fp-content">
+                            <span class="badge badge-${categoryClass(fp.category)}">${escapeHtml(fp.category)}</span>
+                            <h2><a href="#post/${fp.slug}">${escapeHtml(fp.title)}</a></h2>
+                            <p>${escapeHtml(fp.excerpt || '')}</p>
+                            <div class="fp-meta">
+                                <span>${Icons.calendar} ${formatDate(fp.created_at)}</span>
+                                <span>${Icons.clock} ${readTime(fp.content)} min read</span>
+                            </div>
+                        </div>
+                    </div>`;
+                    gridPosts = published.slice(1);
+                }
+
+                const cards = gridPosts.map((p, i) => `
+                <article class="post-card" data-aos="fade-up" data-aos-delay="${i * 100}">
+                    <div class="card-image" style="background-image:url('${coverUrl(p.cover_image, p.id)}')">
+                        <span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span>
+                    </div>
+                    <div class="card-body">
+                        <h3><a href="#post/${p.slug}">${escapeHtml(p.title)}</a></h3>
+                        <p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
+                        <div class="card-meta">
+                            <span>${Icons.calendar} ${formatDate(p.created_at)}</span>
+                            <span>${Icons.clock} ${readTime(p.content)} min</span>
+                        </div>
+                    </div>
+                </article>`).join('');
+
+                const categories = ['All', 'Technology', 'Design', 'Lifestyle', 'Business', 'General'];
+                const catFilter = categories.map(c =>
+                    `<button class="btn btn-sm ${(c === 'All' && !category) || c === category ? 'btn-primary' : 'btn-secondary'}" onclick="App.filterCategory('${c === 'All' ? '' : c}')">${c}</button>`
+                ).join('');
+
+                const emptyState = published.length === 0 ? `
+                <div class="empty-state">
+                    ${Icons.inbox}
+                    <h3>${query || category ? 'No posts found' : 'No posts yet'}</h3>
+                    <p>${query || category ? 'Try adjusting your search or filter.' : 'When posts are published, they will appear here.'}</p>
+                </div>` : '';
+
+                app.innerHTML = `
+                <section class="hero" data-aos="fade-down">
+                    <h1 data-aos="fade-up" data-aos-delay="100">Sagar's Blogs</h1>
+                    <p data-aos="fade-up" data-aos-delay="200">Thoughts, stories & ideas — powered by a serverless edge database.</p>
+                    ${Auth.isAuthenticated() ? `<a href="#admin/dashboard" class="hero-cta">${Icons.edit} Start Writing</a>` : ''}
+                </section>
+                <div class="container" style="padding:48px 24px 80px">
+                    <div class="section-title">
+                        <h2>Latest Posts</h2>
+                        <div class="search-box">
+                            ${Icons.search}
+                            <input type="text" id="search-input" class="${query ? 'has-value' : ''}" placeholder="Search posts..." value="${escapeHtml(query || '')}" oninput="App.onSearch(this.value)">
+                            <button class="search-clear" onclick="App.clearHomeSearch()" title="Clear search">${Icons.x}</button>
+                        </div>
+                    </div>
+                    <div class="filter-bar mb-8" style="display:flex;gap:8px;flex-wrap:wrap">${catFilter}</div>
+                    ${featured}
+                    ${emptyState || `<div class="post-grid">${cards}</div>`}
+                    ${renderPagination(page, totalPages, 'App.goToPage')}
+                </div>`;
+            }
+
+            // -- Page: Single Post --
+            function renderPostPage(post, prevPost, nextPost) {
+                const prevLink = prevPost
+                    ? `<a href="#post/${prevPost.slug}">${Icons.arrowLeft}<span class="post-nav-title">${escapeHtml(prevPost.title)}</span></a>`
+                    : '<span></span>';
+                const nextLink = nextPost
+                    ? `<a href="#post/${nextPost.slug}" style="margin-left:auto;text-align:right;flex-direction:row-reverse"><span class="post-nav-title">${escapeHtml(nextPost.title)}</span>${Icons.arrowRight}</a>`
+                    : '<span></span>';
+
+                const coverImage = post.cover_image || 'assets/img/fallback-image.png';
+
+                app.innerHTML = `
+                <article class="post-view page-enter" style="padding:0">
+                    <div class="post-hero-bg" style="background-image: url('${coverImage}')">
+                        <div class="post-hero-bg-overlay"></div>
+                        <div class="post-hero-bg-content">
+                            <a href="#home" class="post-back-link-bg">${Icons.arrowLeft} Back to Home</a>
+                            <span class="badge badge-${categoryClass(post.category)}">${escapeHtml(post.category)}</span>
+                            <h1 class="post-title-bg">${escapeHtml(post.title)}</h1>
+                            <div class="post-meta-bg">
+                                <span>${Icons.calendar} ${formatDate(post.created_at)}</span>
+                                <span>${Icons.clock} ${readTime(post.content)} min read</span>
+                                ${post.tags ? `<span>${Icons.tag} ${escapeHtml(post.tags)}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-body-wrapper">
+                        <div class="post-body">${post.content || '<p>No content.</p>'}</div>
+                        <nav class="post-nav">${prevLink}${nextLink}</nav>
+                    </div>
+                </article>
+                <button id="go-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn btn-primary go-to-top-btn" title="Go to Top">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>`;
+
+                // Scroll to top when post loads
+                window.scrollTo({ top: 0, behavior: 'instant' });
+
+                // Add scroll listener for go-to-top button visibility
+                setTimeout(() => {
+                    const goToTopBtn = document.getElementById('go-to-top');
+                    if (goToTopBtn) {
+                        const toggleVisibility = () => {
+                            const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                            if (scrollTop > 50) {
+                                goToTopBtn.classList.add('visible');
+                            } else {
+                                goToTopBtn.classList.remove('visible');
+                            }
+                        };
+                        window.addEventListener('scroll', toggleVisibility);
+                        toggleVisibility(); // Check initial position
+                    }
+                }, 0);
+            }
+
+            // -- Page: Login --
+            function renderLoginPage() {
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="form-card">
+                        <h2>Welcome Back</h2>
+                        <p class="form-subtitle">Sign in to access the admin dashboard.</p>
+                        <form id="login-form" onsubmit="App.handleLogin(event)">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input class="form-input" type="text" id="login-user" required autocomplete="username" placeholder="admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input class="form-input" type="password" id="login-pass" required autocomplete="current-password" placeholder="Enter password">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%;margin-top:8px">Sign In</button>
+                        </form>
+                        <p style="text-align:center;margin-top:20px;font-size:.85rem">
+                            <a href="#forgot-password">Forgot password?</a>
+                        </p>
+                        <p style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--text-tertiary)">
+                            Need to connect a database? <a href="#settings">Settings</a>
+                        </p>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Forgot Password --
+            function renderForgotPasswordPage() {
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="form-card">
+                        <h2>Reset Password</h2>
+                        <p class="form-subtitle">Enter your username to generate a reset token.</p>
+                        <form onsubmit="App.handleForgotPassword(event)">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input class="form-input" type="text" id="forgot-user" required placeholder="Your username">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Generate Reset Token</button>
+                        </form>
+                        <div id="reset-token-display" class="hidden" style="margin-top:20px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-sm);word-break:break-all;font-family:var(--font-mono);font-size:.82rem"></div>
+                        <p style="text-align:center;margin-top:16px;font-size:.85rem"><a href="#login">Back to login</a></p>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Reset Password (with token) --
+            function renderResetPasswordPage(token) {
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="form-card">
+                        <h2>Set New Password</h2>
+                        <p class="form-subtitle">Enter your new password below.</p>
+                        <form onsubmit="App.handleResetPassword(event, '${escapeHtml(token)}')">
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input class="form-input" type="password" id="reset-pass" required minlength="6" placeholder="Minimum 6 characters">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input class="form-input" type="password" id="reset-pass-confirm" required placeholder="Repeat password">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Update Password</button>
+                        </form>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Settings (DB Config) --
+            function maskToken(token) {
+                if (!token || token.length < 20) return token;
+                return token.substring(0, 3) + '••••••••••••••••••••' + token.substring(token.length - 3);
+            }
+
+            function renderSettingsPage() {
+                const cfg = DB.getConfig();
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="form-card" style="max-width:580px">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div style="width:56px;height:56px;color:var(--accent)">${Icons.database}</div><h2 style="font-size:1.5rem">Database Settings</h2></div>
+                        <p class="form-subtitle">Connect to your Turso serverless SQLite database. Your full-access token is stored only in this browser's localStorage.</p>
+                        <form onsubmit="App.handleSettings(event)">
+                            <div class="form-group">
+                                <label>Database URL</label>
+                                <input class="form-input" type="url" id="db-url" required placeholder="https://your-db-org.turso.io" value="${escapeHtml(cfg.url || '')}">
+                                <span class="helper">e.g. https://mydb-myorg.turso.io</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Read-Only Token</label>
+                                <input class="form-input" type="text" id="db-read-token" required placeholder="eyJ..." value="${escapeHtml(maskToken(cfg.readToken) || '')}" onfocus="this.value='${escapeHtml(cfg.readToken || '')}'" onblur="this.value='${escapeHtml(maskToken(cfg.readToken) || '')}'">
+                                <span class="helper">Scoped to SELECT only. Safe to embed. Click to reveal.</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Access Token</label>
+                                <input class="form-input" type="password" id="db-full-token" placeholder="eyJ..." value="${escapeHtml(cfg.fullToken || '')}">
+                                <span class="helper">For INSERT/UPDATE/DELETE. Stored in localStorage only.</span>
+                            </div>
+                            <div style="display:flex;gap:10px;margin-top:8px">
+                                <button type="submit" class="btn btn-primary btn-lg">Save & Initialize</button>
+                                <a href="#home" class="btn btn-secondary btn-lg">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Admin Setup (Create first admin) --
+            function renderSetupPage() {
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="form-card">
+                        <div class="setup-steps"><div class="setup-step done"></div><div class="setup-step done"></div><div class="setup-step"></div></div>
+                        <h2>Create Admin Account</h2>
+                        <p class="form-subtitle">Set up the first administrator for your blog.</p>
+                        <form onsubmit="App.handleSetup(event)">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input class="form-input" type="text" id="setup-user" required minlength="3" placeholder="admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input class="form-input" type="password" id="setup-pass" required minlength="6" placeholder="Minimum 6 characters">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input class="form-input" type="password" id="setup-pass2" required placeholder="Repeat password">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Create Account</button>
+                        </form>
+                    </div>
+                </div>`;
+            }
+
+            // -- Admin Sidebar --
+            function adminSidebar(active) {
+                const items = [
+                    { href: '#admin/dashboard', icon: Icons.grid, label: 'Dashboard' },
+                    { href: '#admin/posts', icon: Icons.fileText, label: 'All Posts' },
+                    { href: '#admin/new', icon: Icons.plus, label: 'New Post' },
+                    { href: '#admin/users', icon: Icons.users, label: 'Users' },
+                    { href: '#settings', icon: Icons.settings, label: 'Settings' },
+                ];
+                return `<aside class="admin-sidebar" id="admin-sidebar">`
+                    + `<div class="sidebar-section" style="margin-top:0;margin-bottom:16px">Menu</div>`
+                    + items.map(i => `<a href="${i.href}" class="${active === i.label ? 'active' : ''}" onclick="App.closeAdminSidebar()">${i.icon}${i.label}</a>`).join('')
+                    + `<div style="margin-top:auto;padding-top:20px"><a href="#" onclick="App.logout();return false">${Icons.logout}Logout</a></div>`
+                    + `</aside>`
+                    + `<div class="admin-sidebar-overlay" id="admin-sidebar-overlay" onclick="App.closeAdminSidebar()"></div>`;
+            }
+
+            // -- Page: Dashboard --
+            function renderDashboard(stats, page, totalPages) {
+                app.innerHTML = `
+                <div class="admin-layout page-enter" style="margin-top:var(--nav-h)">
+                    ${adminSidebar('Dashboard')}
+                    <div class="admin-content">
+                        <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+                            <button class="admin-sidebar-toggle-inline" onclick="App.toggleAdminSidebar()" title="Menu" style="display:none">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                            </button>
+                            <h2 style="margin:0">Dashboard</h2>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">${Icons.fileText}</div>
+                                <div class="stat-value">${stats.total}</div>
+                                <div class="stat-label">Total Posts</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon green">${Icons.eye}</div>
+                                <div class="stat-value">${stats.published}</div>
+                                <div class="stat-label">Published</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon amber">${Icons.edit}</div>
+                                <div class="stat-value">${stats.drafts}</div>
+                                <div class="stat-label">Drafts</div>
+                            </div>
+                        </div>
+                        <div class="flex-between mb-4" style="flex-wrap:wrap;gap:12px">
+                            <h3>Recent Posts</h3>
+                            <a href="#admin/new" class="btn btn-primary btn-sm">${Icons.plus} New Post</a>
+                        </div>
+                        ${stats.recent.length > 0 ? `
+                        <div class="data-table-wrap">
+                            <table class="data-table">
+                                <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    ${stats.recent.map(p => `<tr>
+                                        <td class="td-title">${escapeHtml(p.title)}</td>
+                                        <td><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
+                                        <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
+                                        <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
+                                        <td><div class="table-actions">
+                                            <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
+                                            <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
+                                            <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title)}')">${Icons.trash}</button>
+                                        </div></td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${renderPagination(page, totalPages, 'App.goToDashboardPage')}
+                        ` : `<div class="empty-state">${Icons.inbox}<h3>No posts yet</h3><p>Create your first post to get started.</p><a href="#admin/new" class="btn btn-primary">${Icons.plus} Create Post</a></div>`}
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: All Posts (Admin) --
+            function renderAdminPosts(posts, page, totalPages, query) {
+                app.innerHTML = `
+                <div class="admin-layout page-enter" style="margin-top:var(--nav-h)">
+                    ${adminSidebar('All Posts')}
+                    <div class="admin-content">
+                        <div class="flex-between mb-4" style="flex-wrap:wrap;gap:12px">
+                            <div style="display:flex;align-items:center;gap:16px">
+                                <button class="admin-sidebar-toggle-inline" onclick="App.toggleAdminSidebar()" title="Menu" style="display:none">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                </button>
+                                <h2 style="margin:0">All Posts</h2>
+                            </div>
+                            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                                <div class="search-box" style="max-width:280px">${Icons.search}<input type="text" class="${query ? 'has-value' : ''}" placeholder="Search..." value="${escapeHtml(query || '')}" oninput="App.onAdminSearch(this.value)"><button class="search-clear" onclick="App.clearAdminSearch()" title="Clear search">${Icons.x}</button></div>
+                                <a href="#admin/new" class="btn btn-primary btn-sm">${Icons.plus} New</a>
+                            </div>
+                        </div>
+                        ${posts.length > 0 ? `
+                        <div class="data-table-wrap">
+                            <table class="data-table">
+                                <thead><tr><th>Title</th><th>Slug</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    ${posts.map(p => `<tr>
+                                        <td class="td-title">${escapeHtml(p.title)}</td>
+                                        <td style="color:var(--text-tertiary);font-size:.8rem;font-family:var(--font-mono)">${escapeHtml(p.slug)}</td>
+                                        <td><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
+                                        <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
+                                        <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
+                                        <td><div class="table-actions">
+                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')">${Icons.eye}</button>
+                                            <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
+                                            <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
+                                            <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title).replace(/'/g, "\\'")}')">${Icons.trash}</button>
+                                        </div></td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${renderPagination(page, totalPages, 'App.goToAdminPage')}
+                        ` : `<div class="empty-state">${Icons.inbox}<h3>No posts found</h3><p>${query ? 'Try a different search.' : 'Create your first post.'}</p></div>`}
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Post Editor (New / Edit) --
+            function renderPostEditor(post = null) {
+                const isEdit = !!post;
+                app.innerHTML = `
+                <div class="admin-layout page-enter" style="margin-top:var(--nav-h)">
+                    ${adminSidebar(isEdit ? '' : 'New Post')}
+                    <div class="admin-content">
+                        <div class="flex-between mb-8">
+                            <div style="display:flex;align-items:center;gap:16px">
+                                <button class="admin-sidebar-toggle-inline" onclick="App.toggleAdminSidebar()" title="Menu" style="display:none">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                </button>
+                                <h2 style="margin:0">${isEdit ? 'Edit Post' : 'New Post'}</h2>
+                            </div>
+                            <a href="#admin/posts" class="btn btn-ghost btn-sm">${Icons.arrowLeft} Back</a>
+                        </div>
+                        <form id="post-form" onsubmit="App.handlePostSubmit(event, ${isEdit ? post.id : 'null'})">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input class="form-input" type="text" id="post-title" required placeholder="Your post title" value="${isEdit ? escapeHtml(post.title) : ''}" oninput="App.autoSlug(this.value)">
+                                </div>
+                                <div class="form-group">
+                                    <label>Slug</label>
+                                    <input class="form-input" type="text" id="post-slug" required placeholder="auto-generated-slug" value="${isEdit ? escapeHtml(post.slug) : ''}">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select class="form-select" id="post-category">
+                                        ${['General', 'Technology', 'Design', 'Lifestyle', 'Business'].map(c =>
+                    `<option value="${c}" ${isEdit && post.category === c ? 'selected' : ''}>${c}</option>`
+                ).join('')}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tags</label>
+                                    <input class="form-input" type="text" id="post-tags" placeholder="tag1, tag2, tag3" value="${isEdit ? escapeHtml(post.tags || '') : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Cover Image URL</label>
+                                <input class="form-input" type="url" id="post-cover" placeholder="https://example.com/image.jpg" value="${isEdit ? escapeHtml(post.cover_image || '') : ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Excerpt</label>
+                                <textarea class="form-textarea" id="post-excerpt" rows="2" placeholder="Brief summary of the post">${isEdit ? escapeHtml(post.excerpt || '') : ''}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Content</label>
+                                <div id="quill-editor"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-select" id="post-status" style="max-width:200px">
+                                    <option value="draft" ${!isEdit || post.status === 'draft' ? 'selected' : ''}>Draft</option>
+                                    <option value="published" ${isEdit && post.status === 'published' ? 'selected' : ''}>Published</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;gap:12px;margin-top:16px">
+                                <button type="submit" class="btn btn-primary btn-lg">${isEdit ? 'Update Post' : 'Create Post'}</button>
+                                <a href="#admin/posts" class="btn btn-secondary btn-lg">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>`;
+
+                // Initialize Quill editor after DOM is ready
+                setTimeout(() => {
+                    EditorMod.init('#quill-editor', isEdit ? (post.content || '') : '');
+                }, 50);
+            }
+
+            // -- Page: User Management --
+            function renderUsersPage(users, page, totalPages, query) {
+                const start = (page - 1) * 10;
+                const paginatedUsers = users.slice(start, start + 10);
+                app.innerHTML = `
+                <div class="admin-layout page-enter" style="margin-top:var(--nav-h)">
+                    ${adminSidebar('Users')}
+                    <div class="admin-content">
+                        <div class="flex-between mb-4" style="flex-wrap:wrap;gap:12px">
+                            <div style="display:flex;align-items:center;gap:16px">
+                                <button class="admin-sidebar-toggle-inline" onclick="App.toggleAdminSidebar()" title="Menu" style="display:none">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                </button>
+                                <h2 style="margin:0">User Management</h2>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="App.showAddUserModal()">${Icons.plus} Add User</button>
+                        </div>
+                        <div class="search-box mb-4" style="max-width:300px">
+                            ${Icons.search}
+                            <input type="text" class="${query ? 'has-value' : ''}" placeholder="Search users..." value="${escapeHtml(query || '')}" oninput="App.onUserSearch(this.value)">
+                            <button class="search-clear" onclick="App.clearUserSearch()" title="Clear search">${Icons.x}</button>
+                        </div>
+                        ${paginatedUsers.length > 0 ? `
+                        <div class="data-table-wrap">
+                            <table class="data-table">
+                                <thead><tr><th>Username</th><th>Role</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    ${paginatedUsers.map(u => `<tr>
+                                        <td class="td-title">${escapeHtml(u.username)}</td>
+                                        <td><span class="badge badge-${u.role === 'Admin' ? 'tech' : u.role === 'Editor' ? 'design' : 'lifestyle'}">${u.role}</span></td>
+                                        <td><div class="table-actions">
+                                            <button title="View Details" onclick="App.showUserDetailsModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')">${Icons.eye}</button>
+                                            <button title="Change Role" onclick="App.showChangeRoleModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')">${Icons.edit}</button>
+                                            <button title="Delete" class="danger" onclick="App.confirmDeleteUser(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}')">${Icons.trash}</button>
+                                        </div></td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${renderPagination(page, totalPages, 'App.goToUserPage')}
+                        ` : `<div class="empty-state">${Icons.inbox}<h3>No users found</h3><p>${query ? 'Try a different search.' : 'No users available.'}</p></div>`}
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: 404 --
+            function render404() {
+                app.innerHTML = `
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
+                    <div class="empty-state">
+                        ${Icons.alertCircle}
+                        <h3 style="font-size:3rem;margin-bottom:4px">404</h3>
+                        <h3>Page Not Found</h3>
+                        <p>The page you're looking for doesn't exist.</p>
+                        <a href="#home" class="btn btn-primary" style="margin-top:8px">${Icons.arrowLeft} Go Home</a>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: About --
+            function renderAboutPage() {
+                app.innerHTML = `
+                <div class="page-enter" style="margin-top:var(--nav-h);padding:48px 24px 80px">
+                    <div class="container" style="max-width:800px">
+                        <h1 style="margin-bottom:32px;text-align:center">About Me</h1>
+                        
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:40px;margin-bottom:32px;border:1px solid var(--border-light)">
+                            <h2 style="margin-bottom:16px;color:var(--accent)">Sagar Malla</h2>
+                            <p style="margin-bottom:20px;font-size:1.1rem;line-height:1.8">
+                                Over 4 years of experience in System Administration and DevOps, with a strong background in networking. 
+                                Skilled in managing and monitoring servers, NAS, and computer systems to ensure high availability and performance.
+                            </p>
+                            <p style="margin-bottom:20px;line-height:1.7">
+                                Hands-on expertise in containerization with Docker, automation with Jenkins CI/CD pipelines, and deployment 
+                                of applications on both Linux and Windows environments. Experienced with virtualization platforms such as 
+                                ESXi and XCP-ng. Adept at system assembly, upgrades, and configuration to meet organizational requirements, 
+                                while continuously optimizing performance and reliability across infrastructure and networks.
+                            </p>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:24px">
+                                <span class="badge badge-tech">DevOps</span>
+                                <span class="badge badge-design">Windows,Linux System Admin</span>
+                                <span class="badge badge-lifestyle">Networking</span>
+                                <span class="badge badge-business">Cloud</span>
+                            </div>
+                        </div>
+
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:32px;margin-bottom:32px;border:1px solid var(--border-light);text-align:center">
+                            <h3 style="margin-bottom:20px;font-size:1.1rem">Connect With Me</h3>
+                            <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+                                <a href="https://www.linkedin.com/in/sagarmalla08/" target="_blank" rel="noopener noreferrer" style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent)';this.style.color='#fff';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)';this.style.transform='translateY(0)'" title="LinkedIn">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                </a>
+                                <a href="https://github.com/UnstopableSafar08" target="_blank" rel="noopener noreferrer" style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent)';this.style.color='#fff';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)';this.style.transform='translateY(0)'" title="GitHub">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                </a>
+                                <a href="https://twitter.com/sgr_malla08" target="_blank" rel="noopener noreferrer" style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent)';this.style.color='#fff';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)';this.style.transform='translateY(0)'" title="Twitter">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                                </a>
+                                <a href="https://sagarmalla.info.np" target="_blank" rel="noopener noreferrer" style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent)';this.style.color='#fff';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)';this.style.transform='translateY(0)'" title="Portfolio Website">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                </a>
+                                <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent)';this.style.color='#fff';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)';this.style.transform='translateY(0)'" title="Facebook">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:32px">
+                            <h2 style="margin-bottom:24px">Experience</h2>
+                            
+                            <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:24px;margin-bottom:16px;border:1px solid var(--border-light)">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                                    <h3 style="font-size:1.1rem">DevOps Engineer</h3>
+                                    <span style="font-size:.85rem;color:var(--text-tertiary)">July 2023 - Present</span>
+                                </div>
+                                <p style="color:var(--accent);font-weight:600;margin-bottom:12px">eSewa Ltd.</p>
+                                <ul style="color:var(--text-secondary);font-size:.9rem;line-height:1.7;padding-left:20px">
+                                    <li>Design, implement, and maintain CI/CD pipelines using Jenkins, GitLab CI, GitHub Actions</li>
+                                    <li>Manage containerized applications with Docker and Kubernetes</li>
+                                    <li>Automate infrastructure provisioning using Ansible, Helm</li>
+                                    <li>Monitor systems using ELK, Prometheus, Grafana</li>
+                                    <li>Manage cloud infrastructure (AWS, Azure, GCP)</li>
+                                </ul>
+                            </div>
+
+                            <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:24px;margin-bottom:16px;border:1px solid var(--border-light)">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                                    <h3 style="font-size:1.1rem">System and Network Administrator</h3>
+                                    <span style="font-size:.85rem;color:var(--text-tertiary)">Jan 2022 - Present</span>
+                                </div>
+                                <p style="color:var(--accent);font-weight:600;margin-bottom:12px">Braindigit IT Solution Pvt. Ltd.</p>
+                                <ul style="color:var(--text-secondary);font-size:.9rem;line-height:1.7;padding-left:20px">
+                                    <li>Managing computer networks, hardware, software, and IT infrastructure</li>
+                                    <li>Upgrading, installing and configuring new hardware and software</li>
+                                    <li>Performing Database Backup and Restore using GUI and CLI</li>
+                                    <li>Domain Name and SSL certificate management</li>
+                                    <li>NAS server installation, monitoring, and managing</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:32px">
+                            <h2 style="margin-bottom:24px">Education</h2>
+                            <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:24px;border:1px solid var(--border-light)">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+                                    <h3 style="font-size:1.1rem">Bachelor of Information Technology (BIT)</h3>
+                                    <span style="font-size:.85rem;color:var(--text-tertiary)">Aug 2016 - Jan 2020</span>
+                                </div>
+                                <p style="color:var(--text-secondary);margin-bottom:8px">College Of Information Technology and Engineering, Kathmandu</p>
+                                <p style="color:var(--accent);font-size:.9rem">GPA: 3.7</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:32px">
+                            <h2 style="margin-bottom:24px">Skills</h2>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                <span class="badge badge-tech">Github/Gitlab</span>
+                                <span class="badge badge-tech">K3S/K8S</span>
+                                <span class="badge badge-tech">Docker</span>
+                                <span class="badge badge-tech">Jenkins</span>
+                                <span class="badge badge-tech">ArgoCD</span>
+                                <span class="badge badge-tech">Ansible</span>
+                                <span class="badge badge-tech">Nginx/HAProxy/HTTPD</span>
+                                <span class="badge badge-design">AWS</span>
+                                <span class="badge badge-design">Azure</span>
+                                <span class="badge badge-lifestyle">ESXi</span>
+                                <span class="badge badge-lifestyle">XCP-NG</span>
+                                <span class="badge badge-business">Zabbix</span>
+                                <span class="badge badge-business">ELK Stack</span>
+                                <span class="badge badge-business">Grafana Prometheus Stack</span>
+                                <span class="badge badge-general">MySQL</span>
+                                <span class="badge badge-general">MSSQL</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 style="margin-bottom:24px">Certifications</h2>
+                            <ul style="color:var(--text-secondary);line-height:1.8;padding-left:20px">
+                                <li>AWS Solution Architect Associate - Broadway Infosys Pvt. Ltd.</li>
+                                <li>Data Science and Machine Learning with Python - Deerwalk</li>
+                                <li>Cisco Certified Network Associate (CCNA-V3) - NIT</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // -- Page: Contact --
+            function renderContactPage() {
+                app.innerHTML = `
+                <div class="page-enter" style="margin-top:var(--nav-h);padding:48px 24px 80px">
+                    <div class="container" style="max-width:600px">
+                        <h1 style="margin-bottom:16px;text-align:center">Contact</h1>
+                        <p style="text-align:center;color:var(--text-secondary);margin-bottom:48px">Get in touch with me for collaborations, questions, or just to say hello!</p>
+                        
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:40px;border:1px solid var(--border-light)">
+                            <div style="text-align:center;margin-bottom:32px">
+                                <img src="assets/img/sagarmalla.gif" alt="Sagar Malla" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);margin:0 auto 16px;display:block">
+                                <h2 style="margin-bottom:8px">Sagar Malla</h2>
+                                <p style="color:var(--text-tertiary)">DevOps Engineer & System Administrator</p>
+                            </div>
+
+                            <div style="margin-bottom:32px">
+                                <h3 style="font-size:1rem;margin-bottom:16px;color:var(--text-primary)">Email Addresses</h3>
+                                <a href="mailto:admin@sagarmalla.info.np" style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-md);margin-bottom:12px;text-decoration:none;color:var(--text-primary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent-soft)'" onmouseout="this.style.background='var(--bg-tertiary)'">
+                                    <span style="width:40px;height:40px;background:var(--accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:white">${Icons.inbox}</span>
+                                    <div>
+                                        <p style="font-weight:600;margin-bottom:2px">admin@sagarmalla.info.np</p>
+                                        <p style="font-size:.8rem;color:var(--text-tertiary)">Primary Email</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:sagarmallaofficials@gmail.com" style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-md);text-decoration:none;color:var(--text-primary);transition:all var(--transition)" onmouseover="this.style.background='var(--accent-soft)'" onmouseout="this.style.background='var(--bg-tertiary)'">
+                                    <span style="width:40px;height:40px;background:var(--info);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:white">${Icons.inbox}</span>
+                                    <div>
+                                        <p style="font-weight:600;margin-bottom:2px">sagarmallaofficials@gmail.com</p>
+                                        <p style="font-size:.8rem;color:var(--text-tertiary)">Secondary Email</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div style="margin-bottom:32px">
+                                <h3 style="font-size:1rem;margin-bottom:16px;color:var(--text-primary)">Location</h3>
+                                <div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-md)">
+                                    <span style="width:40px;height:40px;background:var(--success);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:white">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </span>
+                                    <div>
+                                        <p style="font-weight:600;margin-bottom:2px">Mahalaxmi-02, Lalitpur</p>
+                                        <p style="font-size:.8rem;color:var(--text-tertiary)">Nepal, 44705</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="text-align:center">
+                                <p style="color:var(--text-tertiary);font-size:.9rem;margin-bottom:16px">Visit my portfolio for more details</p>
+                                <a href="https://sagarmalla.info.np/" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                    Visit Portfolio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // -- Component: Pagination --
+            function renderPagination(page, totalPages, fnName) {
+                if (totalPages <= 1) return '';
+                let buttons = '';
+                buttons += `<button ${page <= 1 ? 'disabled' : ''} onclick="${fnName}(${page - 1})">${Icons.chevLeft}</button>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    if (totalPages > 7 && i > 2 && i < totalPages - 1 && Math.abs(i - page) > 1) {
+                        if (i === 3 || i === totalPages - 2) buttons += `<button disabled>...</button>`;
+                        continue;
+                    }
+                    buttons += `<button class="${i === page ? 'active' : ''}" onclick="${fnName}(${i})">${i}</button>`;
+                }
+                buttons += `<button ${page >= totalPages ? 'disabled' : ''} onclick="${fnName}(${page + 1})">${Icons.chevRight}</button>`;
+                return `<div class="pagination">${buttons}</div>`;
+            }
+
+            // -- Update Navbar state --
+            function updateNav() {
+                const isAuth = Auth.isAuthenticated();
+                document.getElementById('nav-admin').classList.toggle('hidden', !isAuth);
+                document.getElementById('nav-login').classList.toggle('hidden', isAuth);
+                document.getElementById('nav-logout').classList.toggle('hidden', !isAuth);
+
+                // Update active state based on current hash
+                const hash = window.location.hash || '#home';
+                const navLinks = document.querySelectorAll('#nav-links a');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            return {
+                renderHomePage, renderPostPage, renderLoginPage, renderForgotPasswordPage,
+                renderResetPasswordPage, renderSettingsPage, renderSetupPage, renderDashboard,
+                renderAdminPosts, renderPostEditor, renderUsersPage, render404,
+                renderAboutPage, renderContactPage,
+                showToast, showModal, closeModal, showSkeleton, updateNav,
+                escapeHtml, formatDate, readTime
+            };
+        })();
+
+
+        // ==========================================
+        // MODULE 6: EditorMod — Quill.js Wrapper
+        // ==========================================
+        const EditorMod = (() => {
+            let quill = null;
+
+            /**
+             * Initialize Quill WYSIWYG editor on a DOM element.
+             * Uses the 'snow' theme with a curated toolbar.
+             */
+            function init(selector, content = '') {
+                quill = new Quill(selector, {
+                    theme: 'snow',
+                    placeholder: 'Write your story...',
+                    modules: {
+                        toolbar: [
+                            [{ header: [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ color: [] }, { background: [] }],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['blockquote', 'code-block'],
+                            ['link', 'image'],
+                            ['clean']
+                        ]
+                    }
+                });
+                if (content) quill.root.innerHTML = content;
+            }
+
+            function getContent() { return quill ? quill.root.innerHTML : ''; }
+            function setContent(html) { if (quill) quill.root.innerHTML = html; }
+
+            /** Generate a URL-safe slug from a title string */
+            function generateSlug(title) {
+                return title.toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .substring(0, 80);
+            }
+
+            function destroy() { quill = null; }
+
+            return { init, getContent, setContent, generateSlug, destroy };
+        })();
+
+
+        // ==========================================
+        // MODULE 7: App — Main Application Controller
+        // ==========================================
+        /**
+         * The App controller ties together all modules.
+         * It handles route logic, data fetching, pagination,
+         * search with debounce, and user actions.
+         */
+        const App = (() => {
+            const POSTS_PER_PAGE = 6;
+            let homePage = 1, homeQuery = '', homeCat = '';
+            let adminPage = 1, adminQuery = '';
+            let debounceTimer = null;
+            let slugManuallyEdited = false;
+
+            // -- Theme --
+            function initTheme() {
+                const saved = localStorage.getItem('inkwell_theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = saved || (prefersDark ? 'dark' : 'light');
+                applyTheme(theme);
+            }
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('inkwell_theme', theme);
+                document.getElementById('icon-sun').classList.toggle('hidden', theme === 'light');
+                document.getElementById('icon-moon').classList.toggle('hidden', theme === 'dark');
+            }
+            function toggleTheme() {
+                const current = document.documentElement.getAttribute('data-theme');
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            }
+
+            // -- Route Handlers --
+            async function routeHome() {
+                UI.showSkeleton('grid');
+                try {
+                    if (!DB.isConfigured()) {
+                        UI.renderHomePage([], 1, 1, '', '');
+                        return;
+                    }
+                    await loadHomePosts();
+                } catch (e) {
+                    UI.showToast(e.message, 'error');
+                    UI.renderHomePage([], 1, 1, '', '');
+                }
+            }
+
+            async function loadHomePosts() {
+                let sql = "SELECT * FROM posts WHERE status = 'published'";
+                const args = [];
+                if (homeQuery) {
+                    sql += " AND (title LIKE ? OR excerpt LIKE ? OR tags LIKE ?)";
+                    const q = `%${homeQuery}%`;
+                    args.push(q, q, q);
+                }
+                if (homeCat) {
+                    sql += " AND category = ?";
+                    args.push(homeCat);
+                }
+                sql += " ORDER BY created_at DESC";
+                const result = await DB.execute(sql, args);
+                const total = result.rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
+                if (homePage > totalPages) homePage = totalPages;
+                const start = (homePage - 1) * POSTS_PER_PAGE;
+                const posts = result.rows.slice(start, start + POSTS_PER_PAGE);
+                UI.renderHomePage(posts, homePage, totalPages, homeQuery, homeCat);
+            }
+
+            async function routePost(params) {
+                UI.showSkeleton('post');
+                try {
+                    const result = await DB.execute("SELECT * FROM posts WHERE slug = ? AND status = 'published'", [params.slug]);
+                    if (!result.rows.length) { UI.render404(); return; }
+                    const post = result.rows[0];
+                    // Get prev/next posts for navigation
+                    const allPosts = await DB.execute("SELECT id, title, slug FROM posts WHERE status = 'published' ORDER BY created_at DESC");
+                    const idx = allPosts.rows.findIndex(p => p.id === post.id);
+                    const prev = idx < allPosts.rows.length - 1 ? allPosts.rows[idx + 1] : null;
+                    const next = idx > 0 ? allPosts.rows[idx - 1] : null;
+                    UI.renderPostPage(post, prev, next);
+                } catch (e) { UI.showToast(e.message, 'error'); UI.render404(); }
+            }
+
+            function routeLogin() {
+                if (Auth.isAuthenticated()) { Router.navigate('admin/dashboard'); return; }
+                UI.renderLoginPage();
+            }
+
+            function routeSettings() { UI.renderSettingsPage(); }
+
+            async function routeSetup() {
+                if (!DB.isConfigured()) { Router.navigate('settings'); return; }
+                try {
+                    const exists = await Auth.adminExists();
+                    if (exists) { Router.navigate('login'); return; }
+                } catch (e) { /* table may not exist */ }
+                UI.renderSetupPage();
+            }
+
+            let dashboardPage = 1;
+            const DASHBOARD_POSTS_PER_PAGE = 8;
+
+            async function routeDashboard() {
+                UI.showSkeleton('table');
+                try {
+                    const all = await DB.execute("SELECT * FROM posts ORDER BY created_at DESC");
+                    const total = all.rows.length;
+                    const published = all.rows.filter(p => p.status === 'published').length;
+                    const drafts = total - published;
+                    const totalPages = Math.max(1, Math.ceil(total / DASHBOARD_POSTS_PER_PAGE));
+                    if (dashboardPage > totalPages) dashboardPage = totalPages;
+                    const start = (dashboardPage - 1) * DASHBOARD_POSTS_PER_PAGE;
+                    const recent = all.rows.slice(start, start + DASHBOARD_POSTS_PER_PAGE);
+                    UI.renderDashboard({ total, published, drafts, recent }, dashboardPage, totalPages);
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function goToDashboardPage(p) { dashboardPage = p; routeDashboard(); }
+
+            async function routeAdminPosts() {
+                UI.showSkeleton('table');
+                try {
+                    let sql = "SELECT * FROM posts";
+                    const args = [];
+                    if (adminQuery) {
+                        sql += " WHERE title LIKE ? OR slug LIKE ? OR category LIKE ?";
+                        const q = `%${adminQuery}%`;
+                        args.push(q, q, q);
+                    }
+                    sql += " ORDER BY created_at DESC";
+                    const result = await DB.execute(sql, args);
+                    const total = result.rows.length;
+                    const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
+                    if (adminPage > totalPages) adminPage = totalPages;
+                    const start = (adminPage - 1) * POSTS_PER_PAGE;
+                    const posts = result.rows.slice(start, start + POSTS_PER_PAGE);
+                    UI.renderAdminPosts(posts, adminPage, totalPages, adminQuery);
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            async function routeNewPost() {
+                slugManuallyEdited = false;
+                UI.renderPostEditor(null);
+            }
+
+            async function routeEditPost(params) {
+                UI.showSkeleton('table');
+                try {
+                    const result = await DB.execute("SELECT * FROM posts WHERE id = ?", [parseInt(params.id, 10)]);
+                    if (!result.rows.length) { UI.showToast('Post not found', 'error'); Router.navigate('admin/posts'); return; }
+                    slugManuallyEdited = true;
+                    UI.renderPostEditor(result.rows[0]);
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            let usersPage = 1, usersQuery = '', allUsers = [];
+
+            async function routeUsers() {
+                UI.showSkeleton('table');
+                try {
+                    const result = await Auth.getUsers();
+                    allUsers = result.rows;
+                    filterAndRenderUsers();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function filterAndRenderUsers() {
+                let filtered = allUsers;
+                if (usersQuery) {
+                    const q = usersQuery.toLowerCase();
+                    filtered = allUsers.filter(u => u.username.toLowerCase().includes(q) || u.role.toLowerCase().includes(q));
+                }
+                const totalPages = Math.max(1, Math.ceil(filtered.length / 10));
+                if (usersPage > totalPages) usersPage = totalPages;
+                UI.renderUsersPage(filtered, usersPage, totalPages, usersQuery);
+            }
+
+            function onUserSearch(val) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    usersQuery = val;
+                    usersPage = 1;
+                    filterAndRenderUsers();
+                }, 350);
+            }
+
+            function clearUserSearch() {
+                usersQuery = '';
+                usersPage = 1;
+                filterAndRenderUsers();
+            }
+
+            function goToUserPage(p) { usersPage = p; filterAndRenderUsers(); }
+
+            function showUserDetailsModal(id, username, role) {
+                const currentUser = Auth.getUser();
+                const isCurrentUser = currentUser && currentUser.id == id;
+                const isAdmin = currentUser && currentUser.role === 'Admin';
+                const canChangePassword = isCurrentUser || isAdmin;
+                UI.showModal('User Details', `
+                    <div style="margin-bottom:16px">
+                        <p style="margin-bottom:8px"><strong>Username:</strong> ${UI.escapeHtml(username)}</p>
+                        <p style="margin-bottom:8px"><strong>Role:</strong> <span class="badge badge-${role === 'Admin' ? 'tech' : role === 'Editor' ? 'design' : 'lifestyle'}">${role}</span></p>
+                        <p><strong>User ID:</strong> ${id}</p>
+                    </div>
+                    ${canChangePassword ? `
+                    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+                    <p style="margin-bottom:12px;font-weight:600">${isCurrentUser ? 'Change Your Password' : 'Change User Password (Admin)'}</p>
+                    ${!isCurrentUser ? `<p style="font-size:.8rem;color:var(--text-tertiary);margin-bottom:12px">You are changing password for <strong>${UI.escapeHtml(username)}</strong></p>` : ''}
+                    ${isCurrentUser ? `
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <div class="password-input-wrap">
+                            <input class="form-input" type="password" id="modal-current-pass" placeholder="Enter current password">
+                            <button type="button" class="password-toggle" onclick="App.togglePasswordVisibility('modal-current-pass', this)" title="Show password">${Icons.eye}</button>
+                        </div>
+                    </div>
+                    ` : ''}
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <div class="password-input-wrap">
+                            <input class="form-input" type="password" id="modal-new-pass" placeholder="Min 6 characters">
+                            <button type="button" class="password-toggle" onclick="App.togglePasswordVisibility('modal-new-pass', this)" title="Show password">${Icons.eye}</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <div class="password-input-wrap">
+                            <input class="form-input" type="password" id="modal-confirm-pass" placeholder="Repeat new password">
+                            <button type="button" class="password-toggle" onclick="App.togglePasswordVisibility('modal-confirm-pass', this)" title="Show password">${Icons.eye}</button>
+                        </div>
+                    </div>
+                    ` : `<p style="font-size:.85rem;color:var(--text-tertiary)">You can only change your own password.</p>`}
+                `, [
+                    { label: 'Close', class: 'btn-secondary', onclick: 'UI.closeModal()' },
+                    ...(canChangePassword ? [{ label: 'Update Password', class: 'btn-primary', onclick: `App.updateUserPassword(${id}, ${!isCurrentUser})` }] : [])
+                ]);
+            }
+
+            async function updateUserPassword(userId, isAdminReset = false) {
+                const currentPassEl = document.getElementById('modal-current-pass');
+                const currentPass = currentPassEl ? currentPassEl.value : '';
+                const newPass = document.getElementById('modal-new-pass').value;
+                const confirmPass = document.getElementById('modal-confirm-pass').value;
+                if (!isAdminReset && !currentPass) { UI.showToast('Current password is required', 'error'); return; }
+                if (!newPass) { UI.showToast('New password is required', 'error'); return; }
+                if (newPass.length < 6) { UI.showToast('Password must be at least 6 characters', 'error'); return; }
+                if (newPass !== confirmPass) { UI.showToast('New passwords do not match', 'error'); return; }
+                try {
+                    if (isAdminReset) {
+                        // Admin reset - directly update password without current password check
+                        const hash = await Auth.hashPassword(newPass);
+                        await DB.execute('UPDATE admin SET password_hash = ? WHERE id = ?', [hash, userId], true);
+                    } else {
+                        await Auth.changePassword(userId, currentPass, newPass);
+                    }
+                    UI.closeModal();
+                    UI.showToast('Password updated successfully!', 'success');
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function togglePasswordVisibility(inputId, btn) {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword ? Icons.eyeOff : Icons.eye;
+                btn.title = isPassword ? 'Hide password' : 'Show password';
+            }
+
+            function toggleAdminSidebar() {
+                const sidebar = document.getElementById('admin-sidebar');
+                const overlay = document.getElementById('admin-sidebar-overlay');
+                if (sidebar && overlay) {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('visible');
+                }
+            }
+
+            function closeAdminSidebar() {
+                const sidebar = document.getElementById('admin-sidebar');
+                const overlay = document.getElementById('admin-sidebar-overlay');
+                if (sidebar && overlay) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('visible');
+                }
+            }
+
+            function routeForgot() { UI.renderForgotPasswordPage(); }
+            function routeReset(params) { UI.renderResetPasswordPage(params.token); }
+
+            // -- Event Handlers --
+            async function handleLogin(e) {
+                e.preventDefault();
+                const user = document.getElementById('login-user').value.trim();
+                const pass = document.getElementById('login-pass').value;
+                try {
+                    await Auth.login(user, pass);
+                    UI.updateNav();
+                    UI.showToast('Welcome back, ' + user + '!', 'success');
+                    Router.navigate('admin/dashboard');
+                } catch (err) { UI.showToast(err.message, 'error'); }
+            }
+
+            async function handleSettings(e) {
+                e.preventDefault();
+                const url = document.getElementById('db-url').value.trim();
+                const readToken = document.getElementById('db-read-token').value.trim();
+                const fullToken = document.getElementById('db-full-token').value.trim();
+                DB.saveConfig(url, readToken, fullToken);
+                try {
+                    if (fullToken) {
+                        await DB.initTables();
+                        UI.showToast('Database connected and tables initialized!', 'success');
+                    } else {
+                        UI.showToast('Read-only config saved.', 'info');
+                    }
+                    // Check if admin exists to route to setup or home
+                    const exists = await Auth.adminExists();
+                    Router.navigate(exists ? 'home' : 'setup');
+                } catch (err) {
+                    UI.showToast('Connection failed: ' + err.message, 'error');
+                }
+            }
+
+            async function handleSetup(e) {
+                e.preventDefault();
+                const user = document.getElementById('setup-user').value.trim();
+                const pass = document.getElementById('setup-pass').value;
+                const pass2 = document.getElementById('setup-pass2').value;
+                if (pass !== pass2) { UI.showToast('Passwords do not match', 'error'); return; }
+                if (pass.length < 6) { UI.showToast('Password must be at least 6 characters', 'error'); return; }
+                try {
+                    await Auth.createAdmin(user, pass, 'Admin');
+                    await Auth.login(user, pass);
+                    UI.updateNav();
+                    UI.showToast('Admin account created! Welcome!', 'success');
+                    Router.navigate('admin/dashboard');
+                } catch (err) { UI.showToast(err.message, 'error'); }
+            }
+
+            async function handlePostSubmit(e, editId) {
+                e.preventDefault();
+                const title = document.getElementById('post-title').value.trim();
+                const slug = document.getElementById('post-slug').value.trim();
+                const category = document.getElementById('post-category').value;
+                const tags = document.getElementById('post-tags').value.trim();
+                const cover = document.getElementById('post-cover').value.trim();
+                const excerpt = document.getElementById('post-excerpt').value.trim();
+                const status = document.getElementById('post-status').value;
+                const content = EditorMod.getContent();
+
+                if (!title || !slug) { UI.showToast('Title and slug are required', 'error'); return; }
+
+                try {
+                    if (editId) {
+                        await DB.execute(
+                            `UPDATE posts SET title=?, slug=?, content=?, excerpt=?, category=?, tags=?, status=?, cover_image=?, updated_at=datetime('now') WHERE id=?`,
+                            [title, slug, content, excerpt, category, tags, status, cover, editId], true);
+                        UI.showToast('Post updated!', 'success');
+                    } else {
+                        await DB.execute(
+                            `INSERT INTO posts (title, slug, content, excerpt, category, tags, status, cover_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                            [title, slug, content, excerpt, category, tags, status, cover], true);
+                        UI.showToast('Post created!', 'success');
+                    }
+                    Router.navigate('admin/posts');
+                } catch (err) { UI.showToast(err.message, 'error'); }
+            }
+
+            async function toggleStatus(id, currentStatus) {
+                const newStatus = currentStatus === 'published' ? 'draft' : 'published';
+                try {
+                    await DB.execute("UPDATE posts SET status = ?, updated_at = datetime('now') WHERE id = ?", [newStatus, id], true);
+                    UI.showToast(`Post ${newStatus === 'published' ? 'published' : 'set to draft'}`, 'success');
+                    // Refresh current view
+                    const hash = window.location.hash.slice(1);
+                    if (hash.includes('dashboard')) routeDashboard();
+                    else routeAdminPosts();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function confirmDelete(id, title) {
+                UI.showModal('Delete Post', `Are you sure you want to delete "<strong>${title}</strong>"? This action cannot be undone.`, [
+                    { label: 'Cancel', class: 'btn-secondary', onclick: 'UI.closeModal()' },
+                    { label: 'Delete', class: 'btn-danger', onclick: `App.deletePost(${id})` }
+                ]);
+            }
+
+            async function deletePost(id) {
+                UI.closeModal();
+                try {
+                    await DB.execute("DELETE FROM posts WHERE id = ?", [id], true);
+                    UI.showToast('Post deleted', 'success');
+                    const hash = window.location.hash.slice(1);
+                    if (hash.includes('dashboard')) routeDashboard();
+                    else routeAdminPosts();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            async function handleForgotPassword(e) {
+                e.preventDefault();
+                const username = document.getElementById('forgot-user').value.trim();
+                try {
+                    const token = await Auth.generateResetToken(username);
+                    const display = document.getElementById('reset-token-display');
+                    display.classList.remove('hidden');
+                    display.innerHTML = `<strong>Reset Token:</strong><br>${token}<br><br><a href="#reset/${token}">Click here to reset password</a>`;
+                    UI.showToast('Reset token generated', 'success');
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            async function handleResetPassword(e, token) {
+                e.preventDefault();
+                const pass = document.getElementById('reset-pass').value;
+                const confirm = document.getElementById('reset-pass-confirm').value;
+                if (pass !== confirm) { UI.showToast('Passwords do not match', 'error'); return; }
+                if (pass.length < 6) { UI.showToast('Minimum 6 characters', 'error'); return; }
+                try {
+                    await Auth.resetPassword(token, pass);
+                    UI.showToast('Password updated! Please login.', 'success');
+                    Router.navigate('login');
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function showAddUserModal() {
+                UI.showModal('Add User', `
+                <div class="form-group"><label>Username</label><input class="form-input" type="text" id="modal-username" required placeholder="username"></div>
+                <div class="form-group"><label>Password</label><input class="form-input" type="password" id="modal-password" required placeholder="min 6 chars"></div>
+                <div class="form-group"><label>Role</label><select class="form-select" id="modal-role"><option>Author</option><option>Editor</option><option>Admin</option></select></div>
+            `, [
+                    { label: 'Cancel', class: 'btn-secondary', onclick: 'UI.closeModal()' },
+                    { label: 'Create User', class: 'btn-primary', onclick: 'App.addUser()' }
+                ]);
+            }
+
+            async function addUser() {
+                const username = document.getElementById('modal-username').value.trim();
+                const password = document.getElementById('modal-password').value;
+                const role = document.getElementById('modal-role').value;
+                if (!username || password.length < 6) { UI.showToast('Username required, password min 6 chars', 'error'); return; }
+                try {
+                    await Auth.createAdmin(username, password, role);
+                    UI.closeModal();
+                    UI.showToast('User created!', 'success');
+                    routeUsers();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function showChangeRoleModal(id, username, currentRole) {
+                UI.showModal('Change Role', `
+                <p>Update role for <strong>${username}</strong>:</p>
+                <div class="form-group"><select class="form-select" id="modal-new-role">
+                    ${['Author', 'Editor', 'Admin'].map(r => `<option ${r === currentRole ? 'selected' : ''}>${r}</option>`).join('')}
+                </select></div>
+            `, [
+                    { label: 'Cancel', class: 'btn-secondary', onclick: 'UI.closeModal()' },
+                    { label: 'Update', class: 'btn-primary', onclick: `App.changeRole(${id})` }
+                ]);
+            }
+
+            async function changeRole(id) {
+                const role = document.getElementById('modal-new-role').value;
+                try {
+                    await Auth.updateRole(id, role);
+                    UI.closeModal();
+                    UI.showToast('Role updated', 'success');
+                    routeUsers();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            function confirmDeleteUser(id, username) {
+                UI.showModal('Delete User', `Are you sure you want to delete user "<strong>${username}</strong>"?`, [
+                    { label: 'Cancel', class: 'btn-secondary', onclick: 'UI.closeModal()' },
+                    { label: 'Delete', class: 'btn-danger', onclick: `App.deleteUser(${id})` }
+                ]);
+            }
+
+            async function deleteUser(id) {
+                UI.closeModal();
+                try {
+                    await Auth.deleteUser(id);
+                    UI.showToast('User deleted', 'success');
+                    routeUsers();
+                } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            // -- Search with Debounce --
+            /**
+             * Debounce prevents the search from firing on every keystroke.
+             * Instead, it waits for 350ms of inactivity before executing.
+             * This reduces unnecessary DB calls and improves performance.
+             */
+            function onSearch(val) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    homeQuery = val;
+                    homePage = 1;
+                    loadHomePosts().catch(e => UI.showToast(e.message, 'error'));
+                }, 350);
+            }
+
+            function clearHomeSearch() {
+                homeQuery = '';
+                homePage = 1;
+                loadHomePosts().catch(e => UI.showToast(e.message, 'error'));
+            }
+
+            function onAdminSearch(val) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    adminQuery = val;
+                    adminPage = 1;
+                    routeAdminPosts();
+                }, 350);
+            }
+
+            function clearAdminSearch() {
+                adminQuery = '';
+                adminPage = 1;
+                routeAdminPosts();
+            }
+
+            function filterCategory(cat) {
+                homeCat = cat;
+                homePage = 1;
+                loadHomePosts().catch(e => UI.showToast(e.message, 'error'));
+            }
+
+            function goToPage(p) { homePage = p; loadHomePosts().catch(e => UI.showToast(e.message, 'error')); }
+            function goToAdminPage(p) { adminPage = p; routeAdminPosts(); }
+
+            // -- Auto Slug --
+            function autoSlug(title) {
+                if (!slugManuallyEdited) {
+                    const slugEl = document.getElementById('post-slug');
+                    if (slugEl) slugEl.value = EditorMod.generateSlug(title);
+                }
+            }
+
+            // -- Logout --
+            function logout() {
+                Auth.logout();
+                UI.updateNav();
+                UI.showToast('Logged out', 'info');
+                Router.navigate('home');
+            }
+
+            // -- Setup Routes --
+            function setupRoutes() {
+                Router.on('home', routeHome);
+                Router.on('post/:slug', routePost);
+                Router.on('about', routeAbout);
+                Router.on('contact', routeContact);
+                Router.on('login', routeLogin);
+                Router.on('settings', routeSettings);
+                Router.on('setup', routeSetup);
+                Router.on('forgot-password', routeForgot);
+                Router.on('reset/:token', routeReset);
+                Router.on('admin/dashboard', routeDashboard, { auth: true });
+                Router.on('admin/posts', routeAdminPosts, { auth: true });
+                Router.on('admin/new', routeNewPost, { auth: true });
+                Router.on('admin/edit/:id', routeEditPost, { auth: true });
+                Router.on('admin/users', routeUsers, { auth: true, roles: ['Admin'] });
+                Router.notFound(() => UI.render404());
+            }
+
+            function routeAbout() { UI.renderAboutPage(); }
+            function routeContact() { UI.renderContactPage(); }
+
+            // -- Initialize --
+            function init() {
+                initTheme();
+                setupRoutes();
+                UI.updateNav();
+
+                // Theme toggle button
+                document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+                // Mobile menu toggle
+                document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                    document.getElementById('nav-links').classList.toggle('open');
+                });
+
+                // Close mobile menu on nav click
+                document.getElementById('nav-links').addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                        document.getElementById('nav-links').classList.remove('open');
+                    }
+                });
+
+                // Keyboard: close modal on Escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') UI.closeModal();
+                });
+
+                // Slug field manual edit detection
+                document.addEventListener('input', (e) => {
+                    if (e.target.id === 'post-slug') slugManuallyEdited = true;
+                });
+
+                // Initial route resolve
+                if (!window.location.hash) window.location.hash = '#home';
+                else Router.resolve();
+
+                // Initialize AOS animations
+                AOS.init({
+                    duration: 600,
+                    easing: 'ease-out-cubic',
+                    once: true,
+                    offset: 50
+                });
+            }
+
+            init();
+
+            // Expose public API for inline event handlers
+            return {
+                handleLogin, handleSettings, handleSetup, handlePostSubmit,
+                toggleStatus, confirmDelete, deletePost, autoSlug, logout,
+                onSearch, onAdminSearch, filterCategory, goToPage, goToAdminPage,
+                handleForgotPassword, handleResetPassword,
+                showAddUserModal, addUser, showChangeRoleModal, changeRole,
+                confirmDeleteUser, deleteUser,
+                onUserSearch, goToUserPage, showUserDetailsModal, updateUserPassword,
+                goToDashboardPage, clearHomeSearch, clearAdminSearch, clearUserSearch,
+                togglePasswordVisibility, toggleAdminSidebar, closeAdminSidebar
+            };
+        })();
+
+    </script>
+</body>
+
+</html>
