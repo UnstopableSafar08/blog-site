@@ -3198,8 +3198,9 @@
                                 <label>Username</label>
                                 <input class="form-input" type="text" id="forgot-user" required placeholder="Your admin username">
                             </div>
-                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Send Reset Link</button>
+                            <button type="submit" id="forgot-submit-btn" class="btn btn-primary w-full btn-lg" style="width:100%">Send Reset Link</button>
                         </form>
+                        <div id="forgot-countdown" style="text-align:center;margin-top:12px;font-size:0.85rem;color:var(--text-tertiary);min-height:1.2em"></div>
                         <div id="reset-token-display" class="hidden" style="margin-top:20px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-sm);word-break:break-all;font-family:var(--font-mono);font-size:.82rem"></div>
                         <p style="text-align:center;margin-top:16px;font-size:.85rem"><a href="#login">Back to login</a></p>
                     </div>
@@ -4243,17 +4244,56 @@
                 } catch (e) { UI.showToast(e.message, 'error'); }
             }
 
+            let lastResetRequestTime = 0;
+            let forgotCountdownTimer = null;
+
+            function updateForgotCountdown() {
+                const btn = document.getElementById('forgot-submit-btn');
+                const countEl = document.getElementById('forgot-countdown');
+                if (!btn || !countEl) return;
+
+                const check = () => {
+                    const now = Date.now();
+                    const secondsLeft = Math.ceil((60000 - (now - lastResetRequestTime)) / 1000);
+
+                    if (secondsLeft > 0) {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.7';
+                        btn.style.cursor = 'not-allowed';
+                        countEl.textContent = `Please wait ${secondsLeft} seconds...`;
+                        requestAnimationFrame(() => {
+                            setTimeout(check, 1000);
+                        });
+                    } else {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                        countEl.textContent = '';
+                    }
+                };
+                check();
+            }
+
             async function handleForgotPassword(e) {
                 e.preventDefault();
+                
+                const now = Date.now();
+                const secondsLeft = Math.ceil((60000 - (now - lastResetRequestTime)) / 1000);
+                if (secondsLeft > 0) {
+                    UI.showToast(`Please wait ${secondsLeft} seconds.`, 'warning');
+                    return;
+                }
+
                 const username = document.getElementById('forgot-user').value.trim();
                 try {
-                    // Check if user exists and get their role
                     const usersResult = await DB.execute('SELECT id, username, role FROM admin WHERE username = ?', [username]);
                     if (!usersResult.rows.length) throw new Error('User not found');
                     const user = usersResult.rows[0];
 
-                    // Generate reset token
                     const token = await Auth.generateResetToken(username);
+                    lastResetRequestTime = Date.now();
+                    updateForgotCountdown();
+
                     const resetUrl = `${window.location.origin}${window.location.pathname}#reset/${token}`;
                     const display = document.getElementById('reset-token-display');
                     display.classList.remove('hidden');
