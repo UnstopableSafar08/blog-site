@@ -12,9 +12,13 @@ A high-performance, serverless blog platform built with Vanilla JavaScript and T
 - **SPA Architecture**: Smooth, app-like navigation using a custom client-side router.
 - **Dynamic Themes**: Elegant Light and Dark modes with automatic system detection.
 - **CMS Dashboard**: Full-featured administrative interface for content management.
-- **Rich Editing**: Integrated Quill.js WYSIWYG editor for professional post formatting.
+- **Rich Editing**: Integrated Quill.js WYSIWYG editor with syntax highlighting support.
+- **Email Notifications**: Automated admin alerts for password resets via EmailJS.
+- **Security Hardened**: 
+    - Credentials managed via GitHub Secrets and local overrides.
+    - Password visibility toggles on login/setup pages.
+    - Rate-limited password reset requests (60s interval).
 - **SEO Optimized**: Semantic HTML5, unique meta titles, and clean URL structure.
-- **Secure by Design**: Credentials managed via GitHub Secrets and local encryption.
 
 ---
 
@@ -22,8 +26,8 @@ A high-performance, serverless blog platform built with Vanilla JavaScript and T
 
 - **Core**: Vanilla JavaScript (ES6+), CSS3, HTML5
 - **Database**: [Turso](https://turso.tech/) (LibSQL/SQLite)
-- **Styling**: Modern CSS with custom properties (CSS variables)
-- **Icons**: Lucide Icons
+- **Email Service**: [EmailJS](https://www.emailjs.com/)
+- **Icons**: Custom SVG set (based on Lucide)
 - **Editor**: Quill.js
 
 ---
@@ -41,17 +45,32 @@ python3 -m http.server 8080
 npx -y serve .
 ```
 
-### 2. Configuration
-The application requires a Turso database. You can configure it in two ways:
+To configure your database and email locally without editing `index.html`, create a `config.local.js` file in the root (this file is ignored by git):
 
-- **Local Development**: Go to `#admin/settings` in your browser and enter your database URL and tokens. These are saved securely in your browser's `localStorage`.
-- **Production**: Follow the **Security** section below to set up automated deployment.
+```javascript
+// config.local.js
+window.LOCAL_DB_CONFIG = {
+    url: 'https://your-db-url.turso.io',
+    readToken: 'your-read-token',
+    fullToken: 'your-admin-token'
+};
+
+window.LOCAL_EMAIL_CONFIG = {
+    publicKey: 'your-public-key',
+    serviceId: 'your-service-id',
+    templateId: 'your-template-id'
+};
+```
+
+### 2. General Configuration
+The application can also be configured directly via the UI:
+- **Settings Page**: Go to `#admin/settings` (requires login) to update your database connection tokens. These are saved in your browser's `localStorage`.
 
 ---
 
 ## 🔒 Security & Deployment
 
-This project uses **GitHub Actions** to securely inject database credentials during the build process, preventing sensitive tokens from being exposed in the public source code.
+This project uses **GitHub Actions** to securely inject credentials during the build process, ensuring no sensitive tokens are exposed in your public code.
 
 ### Configure GitHub Secrets
 1. Navigate to your repository on GitHub.
@@ -63,25 +82,14 @@ This project uses **GitHub Actions** to securely inject database credentials dur
 | `TURSO_DB_URL` | Your Turso Database HTTP endpoint |
 | `TURSO_READ_TOKEN` | Read-only JWT (for public viewing) |
 | `TURSO_FULL_TOKEN` | Read-write JWT (for admin operations) |
+| `EMAILJS_PUBLIC_KEY` | Your EmailJS Public Key |
+| `EMAILJS_SERVICE_ID` | Your EmailJS Service ID |
+| `EMAILJS_TEMPLATE_ID` | Your EmailJS Template ID |
 
 ### Enable GitHub Actions Deployment
 1. Go to **Settings** > **Pages**.
 2. Under **Build and deployment** > **Source**, select **GitHub Actions**.
 3. The next time you `git push`, the site will automatically deploy with your secrets injected.
-
----
-
-## 📂 Project Structure
-
-```text
-.
-├── .github/workflows/  # Deployment automation
-├── assets/
-│   └── img/           # Static media assets
-├── index.html          # Core Single Page Application
-├── README.md           # Project documentation
-└── security_guide.md   # Detailed security breakdown
-```
 
 ---
 
