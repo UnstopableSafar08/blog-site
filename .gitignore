@@ -58,5 +58,6 @@ backup.zip
 
 # Local development
 *.local
+config.local.js
 scratch.html
 security_guide.md
