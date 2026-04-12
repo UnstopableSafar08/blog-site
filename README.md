@@ -49,10 +49,27 @@ npx -y serve .
 
 The admin dashboard is accessible at `#admin/dashboard` route. Default setup requires database configuration for authentication.
 
+## Security
+
+This project uses GitHub Actions to securely inject database credentials during deployment. **Never hardcode tokens in `index.html`.**
+
+### Configure Secrets on GitHub
+
+1. Go to your repository on GitHub.
+2. Navigate to **Settings** > **Secrets and variables** > **Actions**.
+3. Add the following **Repository secrets**:
+
+| Secret Name | Description |
+|------------|-------------|
+| `TURSO_DB_URL` | Your Turso Database HTTP URL |
+| `TURSO_READ_TOKEN` | A read-only (`ro`) JWT token for public access |
+| `TURSO_FULL_TOKEN` | A read-write (`rw`) JWT token for admin access |
+
+### GitHub Pages Setup
+
+1. Go to **Settings** > **Pages**.
+2. Under **Build and deployment** > **Source**, select **GitHub Actions**.
+
 ## Author
+... (existing content)
 
-**Sagar Malla** - [Portfolio](https://sagarmalla.info.np/)
-
-## License
-
-© 2026 Sagar's Blogs. All rights reserved.

@@ -2335,9 +2335,9 @@
             // Hardcoded read-only credentials for public access
             // Full token is still stored in localStorage for admin write operations
             let config = {
-                url: 'https://testdb-smalla.aws-ap-south-1.turso.io',
-                readToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJleHAiOjE3NzY1MjkzNTYsImlhdCI6MTc3NTkyNDU1NiwiaWQiOiIwMTlkN2Q1Ny1mNjAxLTcwNWQtOTA2YS0xY2E0ZWU2MGEzNzUiLCJyaWQiOiI0NjAzMTAzZS1lNTRiLTQwYjItODlkNC0zMmNkZGQ5YmNlMjkifQ._evB4tYZcaO4tJjlFuxmTBox3hLcy4PryeQ2h7E4e5rgSudbew_WZH187EaNsGtS_Hw_5BhN7yWdffPSrs3CBQ',
-                fullToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE3NzY1MjkzMzAsImlhdCI6MTc3NTkyNDUzMCwiaWQiOiIwMTlkN2Q1Ny1mNjAxLTcwNWQtOTA2YS0xY2E0ZWU2MGEzNzUiLCJyaWQiOiI0NjAzMTAzZS1lNTRiLTQwYjItODlkNC0zMmNkZGQ5YmNlMjkifQ.JEpeL--FLQ-AgkSI0KincB9vkD1kSvA3AFOser2cGIsuh3Z29t5bdUX2YXSu40NX-4a96RTwuOAEsDcXhBfLDg'
+                url: '__TURSO_DB_URL__',
+                readToken: '__TURSO_READ_TOKEN__',
+                fullToken: '__TURSO_FULL_TOKEN__'
             };
 
             function loadConfig() {
