@@ -2684,9 +2684,9 @@
             // Update these values with your EmailJS account details
             // ==============================
             const CONFIG = {
-                publicKey: '5IhdoUi70tgPXI3ip',
-                serviceId: 'service_samlhop',  
-                templateId: 'template_a0rka5c'
+                publicKey: '__EMAILJS_PUBLIC_KEY__',
+                serviceId: '__EMAILJS_SERVICE_ID__',
+                templateId: '__EMAILJS_TEMPLATE_ID__'
             };
 
             // Admin notification email addresses
@@ -2698,7 +2698,12 @@
             let initialized = false;
 
             function init() {
-                if (typeof emailjs !== 'undefined' && CONFIG.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+                // Check for local override
+                if (window.LOCAL_EMAIL_CONFIG) {
+                    Object.assign(CONFIG, window.LOCAL_EMAIL_CONFIG);
+                }
+
+                if (typeof emailjs !== 'undefined' && CONFIG.publicKey && !CONFIG.publicKey.startsWith('__')) {
                     emailjs.init({ publicKey: CONFIG.publicKey });
                     initialized = true;
                 }
