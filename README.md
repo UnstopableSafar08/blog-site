@@ -1,4 +1,4 @@
-# Sagar's Blogs 🖋️
+# Sagar's Blogs
 
 A high-performance, serverless blog platform built with Vanilla JavaScript and Turso SQLite. This project focuses on speed, simplicity, and modern aesthetics without the overhead of heavy frameworks.
 
