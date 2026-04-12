@@ -1,75 +1,96 @@
-# Sagar's Blogs
+# Sagar's Blogs 🖋️
 
-A modern, serverless blog platform built with vanilla JavaScript and Turso SQLite.
+A high-performance, serverless blog platform built with Vanilla JavaScript and Turso SQLite. This project focuses on speed, simplicity, and modern aesthetics without the overhead of heavy frameworks.
 
-**Live Site:** [https://blogs.sagarmalla.info.np/](https://blogs.sagarmalla.info.np/)
+**Live Site:** [blogs.sagarmalla.info.np](https://blogs.sagarmalla.info.np/)
 
-## Features
+---
 
-- **Serverless Architecture** - Powered by Turso edge database
-- **Single Page Application (SPA)** - Smooth navigation without page reloads
-- **Responsive Design** - Mobile-first approach with dark/light theme support
-- **Admin Dashboard** - Full-featured content management system
-- **Rich Text Editor** - WYSIWYG editing with Quill.js
-- **SEO Friendly** - Clean URLs and semantic HTML structure
+## ✨ Features
 
-## Tech Stack
+- **Serverless Power**: Powered by Turso (SQLite on the edge) for ultra-low latency.
+- **SPA Architecture**: Smooth, app-like navigation using a custom client-side router.
+- **Dynamic Themes**: Elegant Light and Dark modes with automatic system detection.
+- **CMS Dashboard**: Full-featured administrative interface for content management.
+- **Rich Editing**: Integrated Quill.js WYSIWYG editor for professional post formatting.
+- **SEO Optimized**: Semantic HTML5, unique meta titles, and clean URL structure.
+- **Secure by Design**: Credentials managed via GitHub Secrets and local encryption.
 
-- **Frontend:** Vanilla JavaScript, CSS3, HTML5
-- **Database:** Turso (SQLite on the edge)
-- **Editor:** Quill.js WYSIWYG
-- **Hosting:** Static site deployment ready
+---
 
-## Project Structure
+## 🛠️ Tech Stack
 
-```
-.
-├── index.html          # Main SPA application
-├── assets/
-│   └── img/           # Images and logos
-├── .gitignore         # Git ignore rules
-└── README.md          # Project documentation
-```
+- **Core**: Vanilla JavaScript (ES6+), CSS3, HTML5
+- **Database**: [Turso](https://turso.tech/) (LibSQL/SQLite)
+- **Styling**: Modern CSS with custom properties (CSS variables)
+- **Icons**: Lucide Icons
+- **Editor**: Quill.js
 
-## Getting Started
+---
 
-1. Clone the repository
-2. Open `index.html` in a browser or serve with a local server
-3. Configure your Turso database credentials in the settings
+## 🚀 Getting Started
 
-### Run locally.
+### 1. Local Development
+Clone the repository and serve it using any local web server:
+
 ```bash
+# Python
 python3 -m http.server 8080
 
-# nodejs
+# Node.js
 npx -y serve .
 ```
 
-## Admin Access
+### 2. Configuration
+The application requires a Turso database. You can configure it in two ways:
 
-The admin dashboard is accessible at `#admin/dashboard` route. Default setup requires database configuration for authentication.
+- **Local Development**: Go to `#admin/settings` in your browser and enter your database URL and tokens. These are saved securely in your browser's `localStorage`.
+- **Production**: Follow the **Security** section below to set up automated deployment.
 
-## Security
+---
 
-This project uses GitHub Actions to securely inject database credentials during deployment. **Never hardcode tokens in `index.html`.**
+## 🔒 Security & Deployment
 
-### Configure Secrets on GitHub
+This project uses **GitHub Actions** to securely inject database credentials during the build process, preventing sensitive tokens from being exposed in the public source code.
 
-1. Go to your repository on GitHub.
-2. Navigate to **Settings** > **Secrets and variables** > **Actions**.
-3. Add the following **Repository secrets**:
+### Configure GitHub Secrets
+1. Navigate to your repository on GitHub.
+2. Go to **Settings** > **Secrets and variables** > **Actions**.
+3. Create the following **Repository secrets**:
 
-| Secret Name | Description |
-|------------|-------------|
-| `TURSO_DB_URL` | Your Turso Database HTTP URL |
-| `TURSO_READ_TOKEN` | A read-only (`ro`) JWT token for public access |
-| `TURSO_FULL_TOKEN` | A read-write (`rw`) JWT token for admin access |
+| Secret Name | Purpose |
+| :--- | :--- |
+| `TURSO_DB_URL` | Your Turso Database HTTP endpoint |
+| `TURSO_READ_TOKEN` | Read-only JWT (for public viewing) |
+| `TURSO_FULL_TOKEN` | Read-write JWT (for admin operations) |
 
-### GitHub Pages Setup
-
+### Enable GitHub Actions Deployment
 1. Go to **Settings** > **Pages**.
 2. Under **Build and deployment** > **Source**, select **GitHub Actions**.
+3. The next time you `git push`, the site will automatically deploy with your secrets injected.
 
-## Author
-... (existing content)
+---
 
+## 📂 Project Structure
+
+```text
+.
+├── .github/workflows/  # Deployment automation
+├── assets/
+│   └── img/           # Static media assets
+├── index.html          # Core Single Page Application
+├── README.md           # Project documentation
+└── security_guide.md   # Detailed security breakdown
+```
+
+---
+
+## 👤 Author
+
+**Sagar Malla**
+- [Portfolio](https://sagarmalla.info.np/)
+- [GitHub](https://github.com/UnstopableSafar08)
+
+---
+
+© 2026 Sagar's Blogs. Created with ❤️ for the open web.
