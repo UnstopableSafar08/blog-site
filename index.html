@@ -2712,9 +2712,6 @@
              */
             async function sendEmail(subject, htmlMessage, recipients = ADMIN_EMAILS) {
                 if (!isConfigured()) {
-                    console.warn('[EmailService] Not configured. Skipping email send.');
-                    console.log('[EmailService] Would have sent to:', recipients.join(', '));
-                    console.log('[EmailService] Subject:', subject);
                     return false;
                 }
 
@@ -4451,15 +4448,11 @@
                         ]);
                     }
 
-                    // Always log credentials to console as an additional safety net
-                    console.log('%c==========================================', 'color: #6366f1; font-weight: bold');
-                    console.log('%c SUPERADMIN ACCOUNT CREATED', 'color: #6366f1; font-weight: bold; font-size: 14px');
-                    console.log('%c Username: ' + username, 'color: #0f172a; font-size: 12px');
-                    console.log('%c Password: ' + password, 'color: #0f172a; font-size: 12px');
-                    console.log('%c==========================================', 'color: #6366f1; font-weight: bold');
+                    // Credentials are shown in the UI modal or sent via email.
+                    // Removed console logging for security purposes.
 
                 } catch (e) {
-                    console.error('[Auto-Setup] Failed to create superadmin:', e);
+                    // Fail silently to avoid interrupting the app flow during auto-setup
                 }
             }
 
