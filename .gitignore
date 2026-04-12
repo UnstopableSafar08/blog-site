@@ -58,3 +58,5 @@ backup.zip
 
 # Local development
 *.local
+scratch.html
+security_guide.md

@@ -37,6 +37,14 @@ A modern, serverless blog platform built with vanilla JavaScript and Turso SQLit
 2. Open `index.html` in a browser or serve with a local server
 3. Configure your Turso database credentials in the settings
 
+### Run locally.
+```bash
+python3 -m http.server 8080
+
+# nodejs
+npx -y serve .
+```
+
 ## Admin Access
 
 The admin dashboard is accessible at `#admin/dashboard` route. Default setup requires database configuration for authentication.

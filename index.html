@@ -911,15 +911,63 @@
             color: var(--text-secondary)
         }
 
+        .code-block-wrapper {
+            position: relative;
+            margin: 24px 0;
+        }
+
         .post-view .post-body pre {
             background: var(--bg-tertiary);
             padding: 20px;
+            padding-top: 40px;
             border-radius: var(--radius-md);
             overflow-x: auto;
             font-family: var(--font-mono);
             font-size: .88rem;
-            margin: 24px 0;
+            margin: 0;
             border: 1px solid var(--border)
+        }
+
+        .code-hdr {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(45, 45, 45, 0.95);
+            padding: 2px 4px;
+            border-bottom-left-radius: 8px;
+            border-top-right-radius: var(--radius-md);
+            box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .code-lang {
+            color: #b58900;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        .copy-code-btn {
+            background: transparent;
+            color: #8e9bba;
+            border: none;
+            padding: 2px 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-family: var(--font-sans);
+        }
+
+        .copy-code-btn:hover {
+            color: #ffffff;
+            background: transparent;
         }
 
         .post-view .post-body code {
@@ -2169,8 +2217,16 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+    <!-- ========== Highlight.js for Syntax Highlighting ========== -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai-sublime.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <!-- ========== Quill.js WYSIWYG Editor ========== -->
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+    <!-- ========== EmailJS SDK for client-side email sending ========== -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <script>
         /* ============================================================
@@ -2189,6 +2245,8 @@
         // MODULE 1: Icons — SVG Icon Library
         // ==========================================
         const Icons = {
+            copy: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+            check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
             calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
             clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
             edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
@@ -2277,16 +2335,31 @@
             // Hardcoded read-only credentials for public access
             // Full token is still stored in localStorage for admin write operations
             let config = {
-                url: 'https://blogs-db-prod-smalla.aws-ap-south-1.turso.io',
-                readToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJpYXQiOjE3NzU5MjIyMjQsImlkIjoiMDE5ZDdkMzUtZDIwMS03MjM3LWJmNjMtNzhkMjMzMjY4OTAyIiwicmlkIjoiNWMwMmFhNjEtMWZkZC00NzE0LTg1ZjEtZWI5YjQ5YWE5YTMyIn0.Ljk8arT0812Blrhdwo0BPdbdybNZiIjFyf3MAMqDTQ6ZASnCSsvwgkw76ea-igBBOpZ-3YXRjwJ-X_hezdehDA',
-                fullToken: ''
+                url: 'https://testdb-smalla.aws-ap-south-1.turso.io',
+                readToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicm8iLCJleHAiOjE3NzY1MjkzNTYsImlhdCI6MTc3NTkyNDU1NiwiaWQiOiIwMTlkN2Q1Ny1mNjAxLTcwNWQtOTA2YS0xY2E0ZWU2MGEzNzUiLCJyaWQiOiI0NjAzMTAzZS1lNTRiLTQwYjItODlkNC0zMmNkZGQ5YmNlMjkifQ._evB4tYZcaO4tJjlFuxmTBox3hLcy4PryeQ2h7E4e5rgSudbew_WZH187EaNsGtS_Hw_5BhN7yWdffPSrs3CBQ',
+                fullToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE3NzY1MjkzMzAsImlhdCI6MTc3NTkyNDUzMCwiaWQiOiIwMTlkN2Q1Ny1mNjAxLTcwNWQtOTA2YS0xY2E0ZWU2MGEzNzUiLCJyaWQiOiI0NjAzMTAzZS1lNTRiLTQwYjItODlkNC0zMmNkZGQ5YmNlMjkifQ.JEpeL--FLQ-AgkSI0KincB9vkD1kSvA3AFOser2cGIsuh3Z29t5bdUX2YXSu40NX-4a96RTwuOAEsDcXhBfLDg'
             };
 
             function loadConfig() {
                 try {
                     const s = localStorage.getItem(CONFIG_KEY);
-                    if (s) config = JSON.parse(s);
-                } catch (e) { /* ignore */ }
+                    if (s) {
+                        const loaded = JSON.parse(s);
+                        // Validate tokens don't contain non-ASCII characters
+                        // (e.g. masked bullet chars '••••' from Settings page bug)
+                        // which would cause: "String contains non ISO-8859-1 code point"
+                        const hasNonAscii = (str) => str && /[^\x00-\xff]/.test(str);
+                        if (hasNonAscii(loaded.readToken) || hasNonAscii(loaded.fullToken)) {
+                            console.warn('[DB] Corrupted tokens in localStorage (non-ASCII chars). Clearing saved config.');
+                            localStorage.removeItem(CONFIG_KEY);
+                            localStorage.removeItem('inkwell_session');
+                            return;
+                        }
+                        config = loaded;
+                    }
+                } catch (e) {
+                    localStorage.removeItem(CONFIG_KEY);
+                }
             }
 
             function saveConfig(url, readToken, fullToken) {
@@ -2412,7 +2485,9 @@
                 username TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
                 role TEXT DEFAULT 'Author',
-                reset_token TEXT DEFAULT NULL
+                reset_token TEXT DEFAULT NULL,
+                created_at TEXT DEFAULT (datetime('now')),
+                updated_at TEXT DEFAULT (datetime('now'))
             )`, [], true);
             }
 
@@ -2501,7 +2576,7 @@
 
             async function createAdmin(username, password, role = 'Admin') {
                 const hash = await hashPassword(password);
-                await DB.execute('INSERT INTO admin (username, password_hash, role) VALUES (?, ?, ?)',
+                await DB.execute("INSERT INTO admin (username, password_hash, role, created_at, updated_at) VALUES (?, ?, ?, datetime('now'), datetime('now'))",
                     [username, hash, role], true);
             }
 
@@ -2539,7 +2614,7 @@
             function getUser() { loadSession(); return currentUser; }
             function hasRole(roles) { return currentUser && roles.includes(currentUser.role); }
 
-            async function getUsers() { return DB.execute('SELECT id, username, role, reset_token FROM admin'); }
+            async function getUsers() { return DB.execute('SELECT id, username, role, reset_token, created_at, updated_at FROM admin'); }
             async function updateRole(id, role) { return DB.execute('UPDATE admin SET role = ? WHERE id = ?', [role, id], true); }
             async function deleteUser(id) { return DB.execute('DELETE FROM admin WHERE id = ?', [id], true); }
 
@@ -2577,6 +2652,134 @@
                 getUsers, updateRole, deleteUser, generateResetToken, resetPassword,
                 changePassword, adminExists, loadSession
             };
+        })();
+
+
+        // ==========================================
+        // MODULE 3.5: EmailService — Email Notifications via EmailJS
+        // ==========================================
+        /**
+         * Email notification service using EmailJS for client-side email sending.
+         *
+         * EmailJS Setup Instructions:
+         * ──────────────────────────────
+         * 1. Sign up at https://www.emailjs.com (free tier: 200 emails/month)
+         * 2. Add an Email Service (Gmail, Outlook, etc.) -> get your Service ID
+         * 3. Create an Email Template with these variables:
+         *    - {{to_email}}   -> Recipient email address
+         *    - {{subject}}    -> Email subject line
+         *    - {{message}}    -> HTML email body content
+         *    - {{from_name}}  -> Sender name (e.g., "Sagar's Blogs")
+         * 4. Copy your Public Key from Account -> API Keys
+         * 5. Update the CONFIG below with your IDs
+         */
+        const EmailService = (() => {
+            // ==============================
+            // EMAILJS CONFIGURATION
+            // Update these values with your EmailJS account details
+            // ==============================
+            const CONFIG = {
+                publicKey: '5IhdoUi70tgPXI3ip',
+                serviceId: 'service_samlhop',  
+                templateId: 'template_a0rka5c'
+            };
+
+            // Admin notification email addresses
+            const ADMIN_EMAILS = [
+                'admin@sagarmalla.info.np',
+                'sagarmallaofficials@gmail.com'
+            ];
+
+            let initialized = false;
+
+            function init() {
+                if (typeof emailjs !== 'undefined' && CONFIG.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+                    emailjs.init({ publicKey: CONFIG.publicKey });
+                    initialized = true;
+                }
+            }
+
+            function isConfigured() {
+                return initialized && CONFIG.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY';
+            }
+
+            /**
+             * Send an email via EmailJS.
+             * @param {string} subject      - Email subject
+             * @param {string} htmlMessage   - HTML body content
+             * @param {string[]} recipients  - Array of recipient emails
+             * @returns {Promise<boolean>}   - Whether the send succeeded
+             */
+            async function sendEmail(subject, htmlMessage, recipients = ADMIN_EMAILS) {
+                if (!isConfigured()) {
+                    console.warn('[EmailService] Not configured. Skipping email send.');
+                    console.log('[EmailService] Would have sent to:', recipients.join(', '));
+                    console.log('[EmailService] Subject:', subject);
+                    return false;
+                }
+
+                try {
+                    for (const email of recipients) {
+                        await emailjs.send(CONFIG.serviceId, CONFIG.templateId, {
+                            to_email: email,
+                            subject: subject,
+                            message: htmlMessage,
+                            from_name: "Sagar's Blogs Admin"
+                        });
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('[EmailService] Failed to send email:', error);
+                    return false;
+                }
+            }
+
+            /**
+             * Send superadmin credentials email after first-time auto-creation.
+             */
+            async function sendAdminCredentials(username, password) {
+                const siteUrl = window.location.origin + window.location.pathname;
+                const subject = "[Sagar's Blogs] Superadmin Account Created";
+                const message = `
+                    <h2 style="color:#0f172a;margin-bottom:16px">Superadmin Account Created</h2>
+                    <p style="color:#4b5563;margin-bottom:20px">A new superadmin account has been automatically created for your blog.</p>
+                    <table style="border-collapse:collapse;margin:20px 0;width:100%">
+                        <tr><td style="padding:12px 16px;font-weight:bold;background:#f1f5f9;border:1px solid #e5e7eb">Username</td><td style="padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb">${username}</td></tr>
+                        <tr><td style="padding:12px 16px;font-weight:bold;background:#f1f5f9;border:1px solid #e5e7eb">Password</td><td style="padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb;font-family:monospace;letter-spacing:1px">${password}</td></tr>
+                    </table>
+                    <p style="color:#ef4444;font-weight:600;margin:16px 0">Important: Please change this password immediately after your first login.</p>
+                    <p style="margin:20px 0"><a href="${siteUrl}#login" style="display:inline-block;padding:12px 24px;background:#6366f1;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Login to Dashboard</a></p>
+                    <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb">
+                    <p style="color:#9ca3af;font-size:12px">This is an automated message from Sagar's Blogs.</p>
+                `;
+                return await sendEmail(subject, message);
+            }
+
+            /**
+             * Send password reset link email to admin addresses.
+             */
+            async function sendResetLink(username, resetToken) {
+                const siteUrl = window.location.origin + window.location.pathname;
+                const resetUrl = `${siteUrl}#reset/${resetToken}`;
+                const subject = "[Sagar's Blogs] Password Reset Request";
+                const message = `
+                    <h2 style="color:#0f172a;margin-bottom:16px">Password Reset Request</h2>
+                    <p style="color:#4b5563;margin-bottom:16px">A password reset was requested for user <strong>${username}</strong>.</p>
+                    <p style="color:#4b5563;margin-bottom:20px">Click the button below to set a new password:</p>
+                    <p style="margin:24px 0">
+                        <a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:#6366f1;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:16px">Reset Password</a>
+                    </p>
+                    <p style="color:#6b7280;font-size:13px;margin-top:16px">Or copy this link:<br><code style="word-break:break-all;background:#f1f5f9;padding:6px 10px;border-radius:4px;display:inline-block;margin-top:8px">${resetUrl}</code></p>
+                    <p style="color:#9ca3af;font-size:13px;margin-top:24px">If you did not request this reset, please ignore this email.</p>
+                    <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb">
+                    <p style="color:#9ca3af;font-size:12px">This is an automated message from Sagar's Blogs.</p>
+                `;
+                return await sendEmail(subject, message);
+            }
+
+            function getAdminEmails() { return [...ADMIN_EMAILS]; }
+
+            return { init, isConfigured, sendEmail, sendAdminCredentials, sendResetLink, getAdminEmails };
         })();
 
 
@@ -2690,6 +2893,10 @@
                 d.textContent = str;
                 return d.innerHTML;
             }
+            function truncate(str, max = 30) {
+                if (!str) return '';
+                return str.length > max ? str.substring(0, max) + '...' : str;
+            }
             function categoryClass(cat) {
                 const map = { Technology: 'tech', Design: 'design', Lifestyle: 'lifestyle', Business: 'business' };
                 return map[cat] || 'general';
@@ -2765,7 +2972,7 @@
                         <div class="fp-image" style="background-image:url('${coverUrl(fp.cover_image, fp.id)}')"></div>
                         <div class="fp-content">
                             <span class="badge badge-${categoryClass(fp.category)}">${escapeHtml(fp.category)}</span>
-                            <h2><a href="#post/${fp.slug}">${escapeHtml(fp.title)}</a></h2>
+                            <h2><a href="#post/${fp.slug}" title="${escapeHtml(fp.title)}">${escapeHtml(truncate(fp.title, 30))}</a></h2>
                             <p>${escapeHtml(fp.excerpt || '')}</p>
                             <div class="fp-meta">
                                 <span>${Icons.calendar} ${formatDate(fp.created_at)}</span>
@@ -2782,7 +2989,7 @@
                         <span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span>
                     </div>
                     <div class="card-body">
-                        <h3><a href="#post/${p.slug}">${escapeHtml(p.title)}</a></h3>
+                        <h3><a href="#post/${p.slug}" title="${escapeHtml(p.title)}">${escapeHtml(truncate(p.title, 30))}</a></h3>
                         <p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
                         <div class="card-meta">
                             <span>${Icons.calendar} ${formatDate(p.created_at)}</span>
@@ -2843,7 +3050,7 @@
                         <div class="post-hero-bg-content">
                             <a href="#home" class="post-back-link-bg">${Icons.arrowLeft} Back to Home</a>
                             <span class="badge badge-${categoryClass(post.category)}">${escapeHtml(post.category)}</span>
-                            <h1 class="post-title-bg">${escapeHtml(post.title)}</h1>
+                            <h1 class="post-title-bg" title="${escapeHtml(post.title)}">${escapeHtml(truncate(post.title, 80))}</h1>
                             <div class="post-meta-bg">
                                 <span>${Icons.calendar} ${formatDate(post.created_at)}</span>
                                 <span>${Icons.clock} ${readTime(post.content)} min read</span>
@@ -2862,6 +3069,72 @@
 
                 // Scroll to top when post loads
                 window.scrollTo({ top: 0, behavior: 'instant' });
+
+                // Add Copy Option to Code Blocks
+                requestAnimationFrame(() => {
+                    const postBody = document.querySelector('.post-body');
+                    if (postBody) {
+                        const preBlocks = postBody.querySelectorAll('pre');
+                        preBlocks.forEach(pre => {
+                            // Enable Highlighter before custom copy headers
+                            if (window.hljs) {
+                                // hljs prefers classes like language-bash. Quill tends to use data-language
+                                const hlLang = pre.getAttribute('data-language');
+                                if (hlLang && !pre.classList.contains('language-' + hlLang)) {
+                                    pre.classList.add('language-' + hlLang);
+                                }
+                                hljs.highlightElement(pre);
+                            }
+
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'code-block-wrapper';
+                            pre.parentNode.insertBefore(wrapper, pre);
+                            wrapper.appendChild(pre);
+
+                            const header = document.createElement('div');
+                            header.className = 'code-hdr';
+
+                            // Determine language
+                            let lang = '';
+                            if (pre.getAttribute('data-language')) {
+                                lang = pre.getAttribute('data-language');
+                            } else {
+                                const classMatch = Array.from(pre.classList).find(c => c.startsWith('language-') || c === 'bash' || c === 'javascript' || c === 'html' || c === 'css');
+                                if (classMatch) {
+                                    lang = classMatch.replace('language-', '');
+                                }
+                            }
+
+                            if (lang) {
+                                const langSpan = document.createElement('span');
+                                langSpan.className = 'code-lang';
+                                langSpan.innerText = lang;
+                                header.appendChild(langSpan);
+                            }
+
+                            const copyBtn = document.createElement('button');
+                            copyBtn.className = 'copy-code-btn';
+                            copyBtn.innerHTML = `${Icons.copy} <span>Copy</span>`;
+                            copyBtn.title = 'Copy to clipboard';
+
+                            copyBtn.onclick = () => {
+                                const codeContent = pre.innerText;
+                                navigator.clipboard.writeText(codeContent).then(() => {
+                                    copyBtn.innerHTML = `${Icons.check} <span>Copied</span>`;
+                                    copyBtn.style.color = '#00cc00';
+
+                                    setTimeout(() => {
+                                        copyBtn.innerHTML = `${Icons.copy} <span>Copy</span>`;
+                                        copyBtn.style.color = '';
+                                    }, 2000);
+                                });
+                            };
+
+                            header.appendChild(copyBtn);
+                            wrapper.appendChild(header);
+                        });
+                    }
+                });
 
                 // Add scroll listener for go-to-top button visibility
                 setTimeout(() => {
@@ -2902,9 +3175,6 @@
                         <p style="text-align:center;margin-top:20px;font-size:.85rem">
                             <a href="#forgot-password">Forgot password?</a>
                         </p>
-                        <p style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--text-tertiary)">
-                            Need to connect a database? <a href="#settings">Settings</a>
-                        </p>
                     </div>
                 </div>`;
             }
@@ -2915,13 +3185,13 @@
                 <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
                     <div class="form-card">
                         <h2>Reset Password</h2>
-                        <p class="form-subtitle">Enter your username to generate a reset token.</p>
+                        <p class="form-subtitle">Enter your admin username. A password reset link will be sent to the registered admin email addresses.</p>
                         <form onsubmit="App.handleForgotPassword(event)">
                             <div class="form-group">
                                 <label>Username</label>
-                                <input class="form-input" type="text" id="forgot-user" required placeholder="Your username">
+                                <input class="form-input" type="text" id="forgot-user" required placeholder="Your admin username">
                             </div>
-                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Generate Reset Token</button>
+                            <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Send Reset Link</button>
                         </form>
                         <div id="reset-token-display" class="hidden" style="margin-top:20px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-sm);word-break:break-all;font-family:var(--font-mono);font-size:.82rem"></div>
                         <p style="text-align:center;margin-top:16px;font-size:.85rem"><a href="#login">Back to login</a></p>
@@ -2946,44 +3216,6 @@
                                 <input class="form-input" type="password" id="reset-pass-confirm" required placeholder="Repeat password">
                             </div>
                             <button type="submit" class="btn btn-primary w-full btn-lg" style="width:100%">Update Password</button>
-                        </form>
-                    </div>
-                </div>`;
-            }
-
-            // -- Page: Settings (DB Config) --
-            function maskToken(token) {
-                if (!token || token.length < 20) return token;
-                return token.substring(0, 3) + '••••••••••••••••••••' + token.substring(token.length - 3);
-            }
-
-            function renderSettingsPage() {
-                const cfg = DB.getConfig();
-                app.innerHTML = `
-                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
-                    <div class="form-card" style="max-width:580px">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div style="width:56px;height:56px;color:var(--accent)">${Icons.database}</div><h2 style="font-size:1.5rem">Database Settings</h2></div>
-                        <p class="form-subtitle">Connect to your Turso serverless SQLite database. Your full-access token is stored only in this browser's localStorage.</p>
-                        <form onsubmit="App.handleSettings(event)">
-                            <div class="form-group">
-                                <label>Database URL</label>
-                                <input class="form-input" type="url" id="db-url" required placeholder="https://your-db-org.turso.io" value="${escapeHtml(cfg.url || '')}">
-                                <span class="helper">e.g. https://mydb-myorg.turso.io</span>
-                            </div>
-                            <div class="form-group">
-                                <label>Read-Only Token</label>
-                                <input class="form-input" type="text" id="db-read-token" required placeholder="eyJ..." value="${escapeHtml(maskToken(cfg.readToken) || '')}" onfocus="this.value='${escapeHtml(cfg.readToken || '')}'" onblur="this.value='${escapeHtml(maskToken(cfg.readToken) || '')}'">
-                                <span class="helper">Scoped to SELECT only. Safe to embed. Click to reveal.</span>
-                            </div>
-                            <div class="form-group">
-                                <label>Full Access Token</label>
-                                <input class="form-input" type="password" id="db-full-token" placeholder="eyJ..." value="${escapeHtml(cfg.fullToken || '')}">
-                                <span class="helper">For INSERT/UPDATE/DELETE. Stored in localStorage only.</span>
-                            </div>
-                            <div style="display:flex;gap:10px;margin-top:8px">
-                                <button type="submit" class="btn btn-primary btn-lg">Save & Initialize</button>
-                                <a href="#home" class="btn btn-secondary btn-lg">Cancel</a>
-                            </div>
                         </form>
                     </div>
                 </div>`;
@@ -3022,8 +3254,7 @@
                     { href: '#admin/dashboard', icon: Icons.grid, label: 'Dashboard' },
                     { href: '#admin/posts', icon: Icons.fileText, label: 'All Posts' },
                     { href: '#admin/new', icon: Icons.plus, label: 'New Post' },
-                    { href: '#admin/users', icon: Icons.users, label: 'Users' },
-                    { href: '#settings', icon: Icons.settings, label: 'Settings' },
+                    { href: '#admin/users', icon: Icons.users, label: 'Users' }
                 ];
                 return `<aside class="admin-sidebar" id="admin-sidebar">`
                     + `<div class="sidebar-section" style="margin-top:0;margin-bottom:16px">Menu</div>`
@@ -3072,7 +3303,7 @@
                                 <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                                 <tbody>
                                     ${stats.recent.map(p => `<tr>
-                                        <td class="td-title">${escapeHtml(p.title)}</td>
+                                        <td class="td-title" title="${escapeHtml(p.title)}">${escapeHtml(truncate(p.title, 30))}</td>
                                         <td><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
                                         <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
                                         <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
@@ -3115,8 +3346,8 @@
                                 <thead><tr><th>Title</th><th>Slug</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                                 <tbody>
                                     ${posts.map(p => `<tr>
-                                        <td class="td-title">${escapeHtml(p.title)}</td>
-                                        <td style="color:var(--text-tertiary);font-size:.8rem;font-family:var(--font-mono)">${escapeHtml(p.slug)}</td>
+                                        <td class="td-title" title="${escapeHtml(p.title)}">${escapeHtml(truncate(p.title, 30))}</td>
+                                        <td style="color:var(--text-tertiary);font-size:.8rem;font-family:var(--font-mono)" title="${escapeHtml(p.slug)}">${escapeHtml(truncate(p.slug, 30))}</td>
                                         <td><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
                                         <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
                                         <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
@@ -3491,7 +3722,7 @@
 
             return {
                 renderHomePage, renderPostPage, renderLoginPage, renderForgotPasswordPage,
-                renderResetPasswordPage, renderSettingsPage, renderSetupPage, renderDashboard,
+                renderResetPasswordPage, renderSetupPage, renderDashboard,
                 renderAdminPosts, renderPostEditor, renderUsersPage, render404,
                 renderAboutPage, renderContactPage,
                 showToast, showModal, closeModal, showSkeleton, updateNav,
@@ -3515,6 +3746,7 @@
                     theme: 'snow',
                     placeholder: 'Write your story...',
                     modules: {
+                        syntax: true, // Enable syntax highlighting
                         toolbar: [
                             [{ header: [1, 2, 3, false] }],
                             ['bold', 'italic', 'underline', 'strike'],
@@ -3538,7 +3770,7 @@
                     .replace(/[^\w\s-]/g, '')
                     .replace(/[\s_]+/g, '-')
                     .replace(/^-+|-+$/g, '')
-                    .substring(0, 80);
+                    .substring(0, 32);
             }
 
             function destroy() { quill = null; }
@@ -3637,10 +3869,8 @@
                 UI.renderLoginPage();
             }
 
-            function routeSettings() { UI.renderSettingsPage(); }
-
             async function routeSetup() {
-                if (!DB.isConfigured()) { Router.navigate('settings'); return; }
+                if (!DB.isConfigured()) return;
                 try {
                     const exists = await Auth.adminExists();
                     if (exists) { Router.navigate('login'); return; }
@@ -3654,7 +3884,7 @@
             async function routeDashboard() {
                 UI.showSkeleton('table');
                 try {
-                    const all = await DB.execute("SELECT * FROM posts ORDER BY created_at DESC");
+                    const all = await DB.execute("SELECT * FROM posts ORDER BY updated_at DESC");
                     const total = all.rows.length;
                     const published = all.rows.filter(p => p.status === 'published').length;
                     const drafts = total - published;
@@ -3678,7 +3908,7 @@
                         const q = `%${adminQuery}%`;
                         args.push(q, q, q);
                     }
-                    sql += " ORDER BY created_at DESC";
+                    sql += " ORDER BY updated_at DESC";
                     const result = await DB.execute(sql, args);
                     const total = result.rows.length;
                     const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
@@ -3852,28 +4082,6 @@
                     Router.navigate('admin/dashboard');
                 } catch (err) { UI.showToast(err.message, 'error'); }
             }
-
-            async function handleSettings(e) {
-                e.preventDefault();
-                const url = document.getElementById('db-url').value.trim();
-                const readToken = document.getElementById('db-read-token').value.trim();
-                const fullToken = document.getElementById('db-full-token').value.trim();
-                DB.saveConfig(url, readToken, fullToken);
-                try {
-                    if (fullToken) {
-                        await DB.initTables();
-                        UI.showToast('Database connected and tables initialized!', 'success');
-                    } else {
-                        UI.showToast('Read-only config saved.', 'info');
-                    }
-                    // Check if admin exists to route to setup or home
-                    const exists = await Auth.adminExists();
-                    Router.navigate(exists ? 'home' : 'setup');
-                } catch (err) {
-                    UI.showToast('Connection failed: ' + err.message, 'error');
-                }
-            }
-
             async function handleSetup(e) {
                 e.preventDefault();
                 const user = document.getElementById('setup-user').value.trim();
@@ -3893,7 +4101,8 @@
             async function handlePostSubmit(e, editId) {
                 e.preventDefault();
                 const title = document.getElementById('post-title').value.trim();
-                const slug = document.getElementById('post-slug').value.trim();
+                let slug = document.getElementById('post-slug').value.trim();
+                if (slug.length > 32) slug = slug.substring(0, 32);
                 const category = document.getElementById('post-category').value;
                 const tags = document.getElementById('post-tags').value.trim();
                 const cover = document.getElementById('post-cover').value.trim();
@@ -3953,11 +4162,37 @@
                 e.preventDefault();
                 const username = document.getElementById('forgot-user').value.trim();
                 try {
+                    // Check if user exists and get their role
+                    const usersResult = await DB.execute('SELECT id, username, role FROM admin WHERE username = ?', [username]);
+                    if (!usersResult.rows.length) throw new Error('User not found');
+                    const user = usersResult.rows[0];
+
+                    // Generate reset token
                     const token = await Auth.generateResetToken(username);
+                    const resetUrl = `${window.location.origin}${window.location.pathname}#reset/${token}`;
                     const display = document.getElementById('reset-token-display');
                     display.classList.remove('hidden');
-                    display.innerHTML = `<strong>Reset Token:</strong><br>${token}<br><br><a href="#reset/${token}">Click here to reset password</a>`;
-                    UI.showToast('Reset token generated', 'success');
+
+                    // If admin user, send reset link via email
+                    if (user.role === 'Admin') {
+                        const emailSent = await EmailService.sendResetLink(username, token);
+                        if (emailSent) {
+                            display.innerHTML = `
+                                <div style="color:var(--success);margin-bottom:12px"><strong>Reset link sent!</strong></div>
+                                <p style="margin-bottom:8px">A password reset link has been sent to:</p>
+                                <ul style="margin:8px 0 12px;padding-left:20px">
+                                    ${EmailService.getAdminEmails().map(em => `<li style="list-style:disc">${em}</li>`).join('')}
+                                </ul>
+                                <p style="font-size:.82rem;color:var(--text-tertiary)">Check your email and click the reset link.</p>`;
+                            UI.showToast('Reset link sent to admin emails!', 'success');
+                        } else {
+                            display.innerHTML = `<strong>Reset Link:</strong><br><br><a href="#reset/${token}" style="word-break:break-all">${resetUrl}</a><br><br><p style="color:var(--warning);font-size:.82rem">Email service not configured. Use the link above to reset your password.</p>`;
+                            UI.showToast('Reset token generated (email not configured)', 'warning');
+                        }
+                    } else {
+                        display.innerHTML = `<strong>Reset Link:</strong><br><br><a href="#reset/${token}">Click here to reset password</a>`;
+                        UI.showToast('Reset token generated', 'success');
+                    }
                 } catch (e) { UI.showToast(e.message, 'error'); }
             }
 
@@ -4104,7 +4339,6 @@
                 Router.on('about', routeAbout);
                 Router.on('contact', routeContact);
                 Router.on('login', routeLogin);
-                Router.on('settings', routeSettings);
                 Router.on('setup', routeSetup);
                 Router.on('forgot-password', routeForgot);
                 Router.on('reset/:token', routeReset);
@@ -4118,6 +4352,116 @@
 
             function routeAbout() { UI.renderAboutPage(); }
             function routeContact() { UI.renderContactPage(); }
+
+            // -- Password Generator (16 char with numbers, letters, special chars) --
+            /**
+             * Generates a cryptographically secure random password.
+             * Uses crypto.getRandomValues() for randomness.
+             * Guarantees at least one uppercase, lowercase, digit, and special character.
+             * @param {number} length - Desired password length (default: 16)
+             * @returns {string} The generated password
+             */
+            function generateRandomPassword(length = 16) {
+                const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const lower = 'abcdefghijklmnopqrstuvwxyz';
+                const digits = '0123456789';
+                const special = '!@#$%&*_+-=?';
+                const all = upper + lower + digits + special;
+
+                const arr = new Uint8Array(length);
+                crypto.getRandomValues(arr);
+
+                // Ensure at least one character from each category
+                let chars = [];
+                chars.push(upper[arr[0] % upper.length]);
+                chars.push(lower[arr[1] % lower.length]);
+                chars.push(digits[arr[2] % digits.length]);
+                chars.push(special[arr[3] % special.length]);
+
+                // Fill remaining positions with random characters from all categories
+                for (let i = 4; i < length; i++) {
+                    chars.push(all[arr[i] % all.length]);
+                }
+
+                // Shuffle using Fisher-Yates with cryptographic randomness
+                const shuffleBytes = new Uint8Array(chars.length);
+                crypto.getRandomValues(shuffleBytes);
+                for (let i = chars.length - 1; i > 0; i--) {
+                    const j = shuffleBytes[i] % (i + 1);
+                    [chars[i], chars[j]] = [chars[j], chars[i]];
+                }
+
+                return chars.join('');
+            }
+
+            // -- Auto Setup: Create superadmin on first startup --
+            /**
+             * Automatically creates a superadmin account on the first startup
+             * of the application when no admin users exist in the database.
+             *
+             * The generated credentials are:
+             * - Sent via email (if EmailJS is configured)
+             * - Shown in a modal dialog (as fallback)
+             * - Logged to the browser console (as additional safety net)
+             */
+            let autoSetupDone = false;
+            async function autoSetupSuperAdmin() {
+                if (autoSetupDone) return;
+                autoSetupDone = true;
+
+                if (!DB.isConfigured() || !DB.hasWriteAccess()) return;
+
+                try {
+                    // Ensure database tables exist
+                    await DB.initTables();
+
+                    // Check if any admin user already exists
+                    const exists = await Auth.adminExists();
+                    if (exists) return; // Admin already exists, skip auto-creation
+
+                    // Generate 16-char password with mixed character types
+                    const username = 'superadmin';
+                    const password = generateRandomPassword(16);
+
+                    // Create the superadmin account in the database
+                    await Auth.createAdmin(username, password, 'Admin');
+
+                    // Attempt to send credentials via email
+                    const emailSent = await EmailService.sendAdminCredentials(username, password);
+
+                    if (emailSent) {
+                        UI.showToast('Superadmin account created! Credentials sent to admin emails.', 'success');
+                    } else {
+                        // Fallback: Show credentials in a modal dialog
+                        UI.showModal('Superadmin Account Created', `
+                            <p style="margin-bottom:16px">A superadmin account has been automatically created for first-time setup.</p>
+                            <p style="margin-bottom:16px;color:var(--danger);font-weight:600">Save these credentials now! They will not be shown again.</p>
+                            <div style="background:var(--bg-tertiary);padding:20px;border-radius:var(--radius-md);margin-bottom:16px;border:1px solid var(--border)">
+                                <p style="margin-bottom:10px"><strong>Username:</strong> <code style="background:var(--accent-soft);padding:3px 10px;border-radius:4px;user-select:all;font-family:var(--font-mono)">${username}</code></p>
+                                <p><strong>Password:</strong> <code style="background:var(--accent-soft);padding:3px 10px;border-radius:4px;user-select:all;font-family:var(--font-mono);letter-spacing:0.5px">${password}</code></p>
+                            </div>
+                            <p style="color:var(--warning);font-size:.85rem;line-height:1.6">
+                                <strong>Note:</strong> Email notifications are not configured. Please copy and securely save these credentials, then change the password after your first login.
+                            </p>
+                            <p style="color:var(--text-tertiary);font-size:.82rem;margin-top:12px">
+                                To enable email notifications, configure EmailJS in the source code (see the EmailService module).
+                            </p>
+                        `, [
+                            { label: "I've Saved These Credentials", class: 'btn-primary', onclick: 'UI.closeModal()' }
+                        ]);
+                    }
+
+                    // Always log credentials to console as an additional safety net
+                    console.log('%c==========================================', 'color: #6366f1; font-weight: bold');
+                    console.log('%c SUPERADMIN ACCOUNT CREATED', 'color: #6366f1; font-weight: bold; font-size: 14px');
+                    console.log('%c Username: ' + username, 'color: #0f172a; font-size: 12px');
+                    console.log('%c Password: ' + password, 'color: #0f172a; font-size: 12px');
+                    console.log('%c==========================================', 'color: #6366f1; font-weight: bold');
+
+                } catch (e) {
+                    console.error('[Auto-Setup] Failed to create superadmin:', e);
+                }
+            }
 
             // -- Initialize --
             function init() {
@@ -4150,6 +4494,9 @@
                     if (e.target.id === 'post-slug') slugManuallyEdited = true;
                 });
 
+                // Initialize EmailJS for email notifications
+                EmailService.init();
+
                 // Initial route resolve
                 if (!window.location.hash) window.location.hash = '#home';
                 else Router.resolve();
@@ -4161,13 +4508,16 @@
                     once: true,
                     offset: 50
                 });
+
+                // Auto-setup: Create superadmin if no admin exists (first startup)
+                autoSetupSuperAdmin();
             }
 
             init();
 
             // Expose public API for inline event handlers
             return {
-                handleLogin, handleSettings, handleSetup, handlePostSubmit,
+                handleLogin, handleSetup, handlePostSubmit,
                 toggleStatus, confirmDelete, deletePost, autoSlug, logout,
                 onSearch, onAdminSearch, filterCategory, goToPage, goToAdminPage,
                 handleForgotPassword, handleResetPassword,
