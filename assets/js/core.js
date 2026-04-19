@@ -108,9 +108,12 @@ const DB = (() => {
         const schema = [
             "CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password_hash TEXT, role TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
             "CREATE TABLE IF NOT EXISTS admin_tokens (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, token TEXT, type TEXT, expires_at DATETIME)",
-            "CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, slug TEXT UNIQUE, excerpt TEXT, content TEXT, category TEXT, tags TEXT, status TEXT DEFAULT 'draft', created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"
+            "CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, slug TEXT UNIQUE, excerpt TEXT, content TEXT, category TEXT, tags TEXT, status TEXT DEFAULT 'draft', views INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
+            "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post_id INTEGER, author_name TEXT, content TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"
         ];
         for (const s of schema) { await execute(s, [], true); }
+        // Migration
+        try { await execute("ALTER TABLE posts ADD COLUMN views INTEGER DEFAULT 0", [], true); } catch(e) {}
     }
 
     loadConfig();
@@ -254,7 +257,12 @@ const EmailService = (() => {
         return await sendEmail("New Superadmin Created", msg);
     }
 
-    return { init, sendEmail, sendAdminCredentials, getAdminEmails: () => [...ADMIN_EMAILS] };
+    async function sendCommentNotification(postTitle, author, content, postUrl) {
+        const msg = `<h3>New Comment on "${postTitle}"</h3><p><b>From:</b> ${author}</p><p><b>Comment:</b></p><blockquote>${content}</blockquote><p><a href="${postUrl}" style="background:#007bff;color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;display:inline-block;margin-top:12px;">View Comment on Post</a></p>`;
+        return await sendEmail("New Comment: " + postTitle, msg, ['comments@sagarmalla.info.np', 'sagarmallaofficials@gmail.com']);
+    }
+
+    return { init, sendEmail, sendAdminCredentials, sendCommentNotification, getAdminEmails: () => [...ADMIN_EMAILS] };
 })();
 
 // ==========================================
