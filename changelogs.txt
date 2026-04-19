@@ -1,0 +1,31 @@
+# CHANGELOG - Blog Site Migration & Refinement
+Date: 2026-04-12
+
+## [1.2.0] - Architecture & Authentication Fixes
+### Added
+- Created standalone `about.html`, `contact.html`, and `login.html` pages for a multi-page architecture.
+- Implemented missing `Auth` module methods in `core.js`:
+    - `getUsers()`: Fetch all admin accounts.
+    - `updateRole(id, role)`: Modify user permissions.
+    - `deleteUser(id)`: Remove user accounts with safety checks.
+    - `changePassword(id, current, new)`: User self-service password updates.
+    - `generateResetToken(username)` & `resetPassword(token, pass)`: Secure forgot-password flow.
+- Added `admin_tokens` table to the database schema to support password reset expiration.
+- Added global `UI_UTILS` helpers (`updateNav`, `handleLogout`) to `core.js` for consistent behavior across all standalone pages.
+
+### Fixed
+- Resolved **501 (Unsupported Method)** error on login by ensuring `config.local.js` is loaded on all auxiliary pages.
+- Corrected SQLite syntax error in `deleteUser` by switching identifier quotes to string literals.
+- Fixed an issue where the user creation modal would unexpectedly close when clicking input fields.
+- Restored missing branded social icons (Twitter, LinkedIn, Facebook, GitHub, Portfolio) to the About page.
+- Fixed the "Logout" functionality to work seamlessly from any page on the site.
+
+### Changed
+- **UI Refinement**: Rearranged the "All Posts" admin header. The title is now at the top, followed by a search bar on the left and the "New Post" button on the right.
+- **Pagination**: Increased results per page from 6/8 to **10 rows** on the Dashboard, All Posts view, and Homepage.
+- **Navigation**: Synchronized the navbar across all standalone files so that authenticated users can see the Dashboard and Logout options regardless of where they are.
+- **Modals**: Improved modal structure by using `div` containers instead of `<p>` tags for form content to prevent browser-specific DOM rendering bugs.
+
+## [1.1.0] - Content Migration
+- Successfully extracted all biographical content, experience, education, and skills from the main application into the dedicated `about.html` file.
+- Cleaned up `index.html` logic by removing obsolete static page rendering functions.
