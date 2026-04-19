@@ -104,12 +104,12 @@
                 const token = response.credential;
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
                 window.currentGoogleUser = JSON.parse(jsonPayload);
                 window.dispatchEvent(new Event('hashchange'));
-            } catch(e) { console.error("Google Auth Error", e); }
+            } catch (e) { console.error("Google Auth Error", e); }
         };
     </script>
 
@@ -296,6 +296,9 @@
 
             // -- Page: Single Post --
             function renderPostPage(post, prevPost, nextPost, comments = [], reactions = []) {
+                let postReactions = {};
+                try { postReactions = JSON.parse(post.reactions || '{}'); } catch (e) { }
+
                 const prevLink = prevPost
                     ? `<a href="#post/${prevPost.slug}">${Icons.arrowLeft}<span class="post-nav-title">${escapeHtml(prevPost.title)}</span></a>`
                     : '<span></span>';
@@ -324,13 +327,27 @@
                     <div class="post-body-wrapper">
                         <div class="post-body">${post.content || '<p>No content.</p>'}</div>
                         
+                        <div class="post-reactions-container">
+                            <h4>React to this post</h4>
+                            <div class="post-reactions">
+                                <button class="post-reaction-like" onclick="Comments.addPostReaction(this, ${post.id}, 'like')">👍 ${postReactions.like || 0}</button>
+                                <button class="post-reaction-love" onclick="Comments.addPostReaction(this, ${post.id}, 'love')">❤️ ${postReactions.love || 0}</button>
+                                <button class="post-reaction-sad" onclick="Comments.addPostReaction(this, ${post.id}, 'sad')">😢 ${postReactions.sad || 0}</button>
+                                <button class="post-reaction-unknown" onclick="Comments.addPostReaction(this, ${post.id}, 'unknown')">🤷 ${postReactions.unknown || 0}</button>
+                            </div>
+                        </div>
+
                         ${Comments.getCommentsHTML(comments, post, reactions)}
                         
                         <nav class="post-nav" style="margin-top: 48px">${prevLink}${nextLink}</nav>
                     </div>
                 </article>
                 <button id="go-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn btn-primary go-to-top-btn" title="Go to Top">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M18 15l-6-6-6 6"/></svg>
+                    <svg class="progress-ring" viewBox="0 0 56 56" style="position:absolute; inset:0; width:100%; height:100%; transform: rotate(-90deg); pointer-events: none;">
+                        <rect x="2" y="2" width="52" height="52" rx="18" fill="none" class="progress-ring-bg" style="stroke: rgba(255,255,255,0.2); stroke-width: 4;" />
+                        <rect x="2" y="2" width="52" height="52" rx="18" fill="none" class="progress-ring-circle" style="stroke: #fff; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 178; stroke-dashoffset: 178; transition: stroke-dashoffset 0.1s cubic-bezier(0.4, 0, 0.2, 1);" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px; position:relative; z-index:2;"><path d="M18 15l-6-6-6 6"/></svg>
                 </button>`;
 
                 // Scroll to top when post loads
@@ -408,10 +425,19 @@
                     if (goToTopBtn) {
                         const toggleVisibility = () => {
                             const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                            
                             if (scrollTop > 50) {
                                 goToTopBtn.classList.add('visible');
                             } else {
                                 goToTopBtn.classList.remove('visible');
+                            }
+
+                            // Update progress ring
+                            const scrollProgress = document.querySelector('.progress-ring-circle');
+                            if (scrollProgress && scrollHeight > 0) {
+                                const scrollPct = Math.min(Math.max(scrollTop / scrollHeight, 0), 1);
+                                scrollProgress.style.strokeDashoffset = 178 - (scrollPct * 178);
                             }
                         };
                         window.addEventListener('scroll', toggleVisibility);
@@ -905,7 +931,7 @@
                                 ['clean']
                             ],
                             handlers: {
-                                'find-replace': function() {
+                                'find-replace': function () {
                                     EditorMod.toggleFindReplace();
                                 }
                             }
@@ -1028,12 +1054,12 @@
 
             function updateMatches(shouldHighlight = false) {
                 clearHighlights();
-                
+
                 const findInput = document.getElementById('find-input');
                 if (!findInput) return;
                 const term = findInput.value;
                 const countEl = document.getElementById('match-count');
-                
+
                 if (!term) {
                     matches = [];
                     currentMatchIndex = -1;
@@ -1045,7 +1071,7 @@
                 const text = quill.getText();
                 matches = [];
                 let index = 0;
-                
+
                 while ((index = text.indexOf(term, index)) !== -1) {
                     matches.push(index);
                     index += term.length;
@@ -1058,7 +1084,7 @@
                 } else {
                     currentMatchIndex = -1;
                 }
-                
+
                 updateMatchStatus(shouldHighlight);
             }
 
@@ -1072,7 +1098,7 @@
                     return;
                 }
                 countEl.textContent = `${currentMatchIndex + 1}/${matches.length}`;
-                
+
                 if (shouldHighlight) {
                     const term = findInput.value;
                     quill.setSelection(matches[currentMatchIndex], term.length);
@@ -1088,9 +1114,9 @@
             function findAll() {
                 const findInput = document.getElementById('find-input');
                 if (!findInput || matches.length === 0) return;
-                
+
                 clearHighlights();
-                
+
                 const term = findInput.value;
                 matches.forEach(index => {
                     quill.formatText(index, term.length, 'background', 'yellow');
@@ -1104,20 +1130,20 @@
                 if (!findInput || !replaceInput) return;
 
                 if (matches.length === 0 || currentMatchIndex === -1) return;
-                
+
                 const term = findInput.value;
                 const replacement = replaceInput.value;
                 const index = matches[currentMatchIndex];
-                
+
                 // Preserve current match index to highlight the next one after replacement
                 const oldIndex = currentMatchIndex;
-                
+
                 quill.deleteText(index, term.length);
                 quill.insertText(index, replacement);
-                
+
                 // Re-calculate matches
-                updateMatches(false); 
-                
+                updateMatches(false);
+
                 // Move to the next match (which is now at the same currentMatchIndex if it exists)
                 if (matches.length > 0) {
                     currentMatchIndex = oldIndex % matches.length;
@@ -1137,7 +1163,7 @@
                 const text = quill.getText();
                 const allMatches = [];
                 let index = 0;
-                
+
                 while ((index = text.indexOf(term, index)) !== -1) {
                     allMatches.push(index);
                     index += term.length;
@@ -1148,7 +1174,7 @@
                     quill.deleteText(allMatches[i], term.length);
                     quill.insertText(allMatches[i], replacement);
                 }
-                
+
                 updateMatches(false);
             }
 
@@ -1252,24 +1278,24 @@
                     const result = await DB.execute("SELECT * FROM posts WHERE slug = ? AND status = 'published'", [params.slug]);
                     if (!result.rows.length) { UI.render404(); return; }
                     const post = result.rows[0];
-                    
+
                     // Fetch comments
                     let comments = [];
                     let reactions = [];
                     try {
-                        const commentsResult = await DB.execute("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC", [post.id]);
+                        const commentsResult = await DB.execute("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC", [post.id]);
                         comments = commentsResult.rows || [];
-                        
-                        if(comments.length > 0) {
+
+                        if (comments.length > 0) {
                             try {
                                 const reactionsResult = await DB.execute("SELECT cr.* FROM comment_reaction cr JOIN comments c ON cr.comment_id = c.id WHERE c.post_id = ?", [post.id]);
                                 reactions = reactionsResult.rows || [];
-                            } catch(e){}
+                            } catch (e) { }
                         }
                     } catch (e) {
                         // Table might not exist yet if migration failed
                     }
-                    
+
                     // Get prev/next posts for navigation
                     const allPosts = await DB.execute("SELECT id, title, slug FROM posts WHERE status = 'published' ORDER BY created_at DESC");
                     const idx = allPosts.rows.findIndex(p => p.id === post.id);

@@ -2229,3 +2229,43 @@ p {
     width: 16px;
     height: 16px;
 }
+
+/* ---------- Reactions ---------- */
+.post-reactions-container {
+    margin-top: 32px; 
+    padding-top: 24px; 
+    border-top: 1px solid var(--border);
+}
+
+.post-reactions-container h4 {
+    margin-bottom: 16px;
+}
+
+.post-reactions {
+    display: flex; gap: 12px; flex-wrap: wrap;
+}
+
+.post-reactions button {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.post-reaction-like { color: #45ec0f; }
+.post-reaction-love { color: orangered; }
+.post-reaction-sad { color: yellow; }
+.post-reaction-unknown { color: #00bbff; }
+
+.post-reactions button, .comment-reactions button {
+    transition: all 0.2s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+.post-reactions button:hover, .comment-reactions button:hover {
+    background-color: #011959 !important;
+    color: #fff300 !important;
+    transform: scale(1.1);
+}
