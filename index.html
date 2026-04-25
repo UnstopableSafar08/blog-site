@@ -165,8 +165,16 @@
                 const map = { Technology: 'tech', Design: 'design', Lifestyle: 'lifestyle', Business: 'business' };
                 return map[cat] || 'general';
             }
-            function coverUrl(img, i) {
+            function coverUrl(img, content) {
                 if (img) return img;
+                // Try to extract the first image from post content
+                if (content) {
+                    const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+                    if (imgMatch && imgMatch[1]) return imgMatch[1];
+                    // Also check for markdown-style images that were converted
+                    const mdMatch = content.match(/!\[[^\]]*\]\(([^)]+)\)/i);
+                    if (mdMatch && mdMatch[1]) return mdMatch[1];
+                }
                 return 'assets/img/fallback-image.png';
             }
 
@@ -233,7 +241,7 @@
                     const fp = published[0];
                     featured = `
                     <div class="featured-post">
-                        <div class="fp-image" style="background-image:url('${coverUrl(fp.cover_image, fp.id)}')"></div>
+                        <div class="fp-image" style="background-image:url('${coverUrl(fp.cover_image, fp.content)}')"></div>
                         <div class="fp-content">
                             <span class="badge badge-${categoryClass(fp.category)}">${escapeHtml(fp.category)}</span>
                             <h2><a href="#post/${fp.slug}" title="${escapeHtml(fp.title)}">${escapeHtml(truncate(fp.title, 30))}</a></h2>
@@ -250,7 +258,7 @@
 
                 const cards = gridPosts.map((p, i) => `
                 <article class="post-card" data-aos="fade-up" data-aos-delay="${i * 100}">
-                    <div class="card-image" style="background-image:url('${coverUrl(p.cover_image, p.id)}')">
+                    <div class="card-image" style="background-image:url('${coverUrl(p.cover_image, p.content)}')">
                         <span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span>
                     </div>
                     <div class="card-body">
@@ -299,7 +307,7 @@
             }
 
             // -- Page: Single Post --
-            function renderPostPage(post, prevPost, nextPost, comments = [], reactions = []) {
+            function renderPostPage(post, prevPost, nextPost, comments = [], reactions = [], isAdmin = false) {
                 let postReactions = {};
                 try { postReactions = JSON.parse(post.reactions || '{}'); } catch (e) { }
 
@@ -310,10 +318,34 @@
                     ? `<a href="#post/${nextPost.slug}" style="margin-left:auto;text-align:right;flex-direction:row-reverse"><span class="post-nav-title">${escapeHtml(nextPost.title)}</span>${Icons.arrowRight}</a>`
                     : '<span></span>';
 
-                const coverImage = post.cover_image || 'assets/img/fallback-image.png';
+                const coverImage = coverUrl(post.cover_image, post.content);
+
+                let adminBanner = '';
+                if (isAdmin) {
+                    if (post.status === 'draft') {
+                        adminBanner = `
+                        <div class="admin-banner draft">
+                            <div class="admin-banner-content">
+                                ${Icons.alertCircle}
+                                <span><strong>Draft Preview</strong> — This post is not published and only visible to admins.</span>
+                            </div>
+                            <a href="#admin/edit/${post.id}" class="btn btn-sm admin-banner-btn">${Icons.edit} Edit Post</a>
+                        </div>`;
+                    } else {
+                        adminBanner = `
+                        <div class="admin-banner published">
+                            <div class="admin-banner-content">
+                                ${Icons.alertCircle}
+                                <span><strong>Published</strong> — You are logged in as admin, edit this post.</span>
+                            </div>
+                            <a href="#admin/edit/${post.id}" class="btn btn-sm admin-banner-btn">${Icons.edit} Edit Post</a>
+                        </div>`;
+                    }
+                }
 
                 app.innerHTML = `
                 <article class="post-view page-enter" style="padding:0">
+                    ${adminBanner}
                     <div class="post-hero-bg" style="background-image: url('${coverImage}')">
                         <div class="post-hero-bg-overlay"></div>
                         <div class="post-hero-bg-content">
@@ -615,6 +647,7 @@
                                         <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
                                         <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
                                         <td><div class="table-actions">
+                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')">${Icons.eye}</button>
                                             <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
                                             <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
                                             <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title)}')">${Icons.trash}</button>
@@ -718,8 +751,36 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Cover Image URL</label>
-                                <input class="form-input" type="url" id="post-cover" placeholder="https://example.com/image.jpg" value="${isEdit ? escapeHtml(post.cover_image || '') : ''}">
+                                <label>Cover Image</label>
+                                <div class="cover-image-input">
+                                    <div class="cover-input-tabs">
+                                        <button type="button" class="cover-tab active" id="cover-tab-url" onclick="App.switchCoverTab('url')">
+                                            ${Icons.tag} URL
+                                        </button>
+                                        <button type="button" class="cover-tab" id="cover-tab-upload" onclick="App.switchCoverTab('upload')">
+                                            ${Icons.plus} Upload
+                                        </button>
+                                    </div>
+                                    <div id="cover-url-panel">
+                                        <input class="form-input" type="url" id="post-cover" placeholder="https://example.com/image.jpg" value="${isEdit ? escapeHtml(post.cover_image || '') : ''}" oninput="App.updateCoverPreview()">
+                                    </div>
+                                    <div id="cover-upload-panel" class="hidden">
+                                        <label class="cover-upload-area" id="cover-upload-area">
+                                            <input type="file" id="cover-file-input" accept="image/*" onchange="App.handleCoverUpload(event)" style="display:none">
+                                            <div class="cover-upload-content">
+                                                ${Icons.plus}
+                                                <span>Click to upload or drag an image</span>
+                                                <small>Max 5MB &middot; JPG, PNG, GIF, WebP</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div id="cover-preview-container" class="${isEdit && post.cover_image ? '' : 'hidden'}">
+                                        <div class="cover-preview">
+                                            <img id="cover-preview-img" src="${isEdit && post.cover_image ? escapeHtml(post.cover_image) : ''}" alt="Cover preview">
+                                            <button type="button" class="cover-preview-remove" onclick="App.removeCoverImage()" title="Remove image">${Icons.x}</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Excerpt</label>
@@ -1561,7 +1622,12 @@
                         // ignore if views column isn't there or token doesn't allow write
                     }
 
-                    const result = await DB.execute("SELECT * FROM posts WHERE slug = ? AND status = 'published'", [params.slug]);
+                    // Admins can view any post (published or draft), visitors only see published
+                    const isAdmin = Auth.isAuthenticated();
+                    const query = isAdmin
+                        ? "SELECT * FROM posts WHERE slug = ?"
+                        : "SELECT * FROM posts WHERE slug = ? AND status = 'published'";
+                    const result = await DB.execute(query, [params.slug]);
                     if (!result.rows.length) { UI.render404(); return; }
                     const post = result.rows[0];
 
@@ -1582,12 +1648,15 @@
                         // Table might not exist yet if migration failed
                     }
 
-                    // Get prev/next posts for navigation
-                    const allPosts = await DB.execute("SELECT id, title, slug FROM posts WHERE status = 'published' ORDER BY created_at DESC");
+                    // Get prev/next posts for navigation (admins see all posts)
+                    const navQuery = isAdmin
+                        ? "SELECT id, title, slug FROM posts ORDER BY created_at DESC"
+                        : "SELECT id, title, slug FROM posts WHERE status = 'published' ORDER BY created_at DESC";
+                    const allPosts = await DB.execute(navQuery);
                     const idx = allPosts.rows.findIndex(p => p.id === post.id);
                     const prev = idx < allPosts.rows.length - 1 ? allPosts.rows[idx + 1] : null;
                     const next = idx > 0 ? allPosts.rows[idx - 1] : null;
-                    UI.renderPostPage(post, prev, next, comments, reactions);
+                    UI.renderPostPage(post, prev, next, comments, reactions, isAdmin);
                 } catch (e) { UI.showToast(e.message, 'error'); UI.render404(); }
             }
 
@@ -1789,6 +1858,97 @@
                     UI.closeModal();
                     UI.showToast('Password updated successfully!', 'success');
                 } catch (e) { UI.showToast(e.message, 'error'); }
+            }
+
+            // ---- Cover Image Upload Logic ----
+            let currentCoverTab = 'url';
+
+            function switchCoverTab(tab) {
+                currentCoverTab = tab;
+                document.querySelectorAll('.cover-tab').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById('cover-tab-' + tab);
+                if (activeBtn) activeBtn.classList.add('active');
+                
+                const urlPanel = document.getElementById('cover-url-panel');
+                const uploadPanel = document.getElementById('cover-upload-panel');
+                if (urlPanel) urlPanel.classList.toggle('hidden', tab !== 'url');
+                if (uploadPanel) uploadPanel.classList.toggle('hidden', tab !== 'upload');
+            }
+
+            function handleCoverUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    UI.showToast('Please upload an image file.', 'error');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    UI.showToast('Image is too large. Max 5MB.', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Max width 1200px for cover images to keep DB size small
+                        const MAX_WIDTH = 1200;
+                        if (width > MAX_WIDTH) {
+                            height = Math.round(height * (MAX_WIDTH / width));
+                            width = MAX_WIDTH;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Compress as WebP for optimal size, or JPEG fallback
+                        const dataUrl = canvas.toDataURL('image/webp', 0.8) || canvas.toDataURL('image/jpeg', 0.8);
+                        
+                        const coverInput = document.getElementById('post-cover');
+                        if (coverInput) coverInput.value = dataUrl;
+                        updateCoverPreview();
+                        UI.showToast('Image uploaded and optimized!', 'success');
+                        
+                        // Switch back to URL tab to show the data URL
+                        switchCoverTab('url');
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function updateCoverPreview() {
+                const input = document.getElementById('post-cover');
+                if (!input) return;
+                const url = input.value.trim();
+                const container = document.getElementById('cover-preview-container');
+                const img = document.getElementById('cover-preview-img');
+                
+                if (container && img) {
+                    if (url) {
+                        img.src = url;
+                        container.classList.remove('hidden');
+                    } else {
+                        container.classList.add('hidden');
+                        img.src = '';
+                    }
+                }
+            }
+
+            function removeCoverImage() {
+                const input = document.getElementById('post-cover');
+                const fileInput = document.getElementById('cover-file-input');
+                if (input) input.value = '';
+                if (fileInput) fileInput.value = '';
+                updateCoverPreview();
             }
 
             function togglePasswordVisibility(inputId, btn) {
@@ -2332,7 +2492,8 @@
                 confirmDeleteUser, deleteUser,
                 onUserSearch, goToUserPage, showUserDetailsModal, updateUserPassword,
                 goToDashboardPage, clearHomeSearch, clearAdminSearch, clearUserSearch,
-                togglePasswordVisibility, toggleAdminSidebar, closeAdminSidebar
+                togglePasswordVisibility, toggleAdminSidebar, closeAdminSidebar,
+                switchCoverTab, handleCoverUpload, updateCoverPreview, removeCoverImage
             };
         })();
 
