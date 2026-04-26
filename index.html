@@ -40,21 +40,15 @@
                 <a href="login.html" id="nav-login">Login</a>
                 <button id="nav-logout" class="hidden" onclick="UI_UTILS.handleLogout()">Logout</button>
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-                    <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round">
-                        <circle cx="12" cy="12" r="5" />
-                        <line x1="12" y1="1" x2="12" y2="3" />
-                        <line x1="12" y1="21" x2="12" y2="23" />
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                        <line x1="1" y1="12" x2="3" y2="12" />
-                        <line x1="21" y1="12" x2="23" y2="12" />
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    <svg id="icon-sun" viewBox="0 0 24 24" fill="currentColor" style="width:24px; height:24px;">
+                        <path
+                            d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18.75a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM6.166 18.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.06 1.061l1.59 1.59zM4.5 12a.75.75 0 01-.75.75H1.5a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM6.166 5.106a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 101.06-1.06l-1.59-1.591z" />
                     </svg>
-                    <svg id="icon-moon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    <svg id="icon-moon" class="hidden" viewBox="0 0 24 24" fill="currentColor"
+                        style="width:24px; height:24px;">
+                        <path fill-rule="evenodd"
+                            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                            clip-rule="evenodd" />
                     </svg>
                 </button>
             </div>
@@ -287,7 +281,7 @@
                 app.innerHTML = `
                 <section class="hero" data-aos="fade-down">
                     <h1 data-aos="fade-up" data-aos-delay="100">Sagar's Blogs</h1>
-                    <p data-aos="fade-up" data-aos-delay="200">Thoughts, stories & ideas — powered by a serverless edge database.</p>
+                    <p data-aos="fade-up" data-aos-delay="200">Thoughts, stories & ideas — One engineer's notes on how things actually work.</p>
                     ${Auth.isAuthenticated() ? `<a href="#admin/dashboard" class="hero-cta">${Icons.edit} Start Writing</a>` : ''}
                 </section>
                 <div class="container" style="padding:48px 24px 80px">
@@ -462,7 +456,7 @@
                         const toggleVisibility = () => {
                             const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
                             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                            
+
                             if (scrollTop > 50) {
                                 goToTopBtn.classList.add('visible');
                             } else {
@@ -647,7 +641,7 @@
                                         <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
                                         <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
                                         <td><div class="table-actions">
-                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')">${Icons.eye}</button>
+                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')" style="min-width: max-content; padding: 0 10px; gap: 6px;">${Icons.eye} View</button>
                                             <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
                                             <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
                                             <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title)}')">${Icons.trash}</button>
@@ -694,7 +688,7 @@
                                         <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
                                         <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
                                         <td><div class="table-actions">
-                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')">${Icons.eye}</button>
+                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')" style="min-width: max-content; padding: 0 10px; gap: 6px;">${Icons.eye} View</button>
                                             <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
                                             <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
                                             <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title).replace(/'/g, "\\'")}')">${Icons.trash}</button>
@@ -808,14 +802,20 @@
                                             <button type="button" onclick="EditorMod.mdInsert('heading')" title="Heading">${Icons.fileText} H</button>
                                             <button type="button" onclick="EditorMod.mdInsert('bold')" title="Bold"><strong>B</strong></button>
                                             <button type="button" onclick="EditorMod.mdInsert('italic')" title="Italic"><em>I</em></button>
+                                            <button type="button" onclick="EditorMod.mdInsert('underline')" title="Underline"><u>U</u></button>
+                                            <button type="button" onclick="EditorMod.mdInsert('strike')" title="Strikethrough"><s>S</s></button>
+                                            <button type="button" onclick="EditorMod.mdInsert('color')" title="Text Color"><span style="color:var(--primary)">A</span></button>
+                                            <button type="button" onclick="EditorMod.mdInsert('background')" title="Background Color"><span style="background:var(--accent);color:white">A</span></button>
                                             <button type="button" onclick="EditorMod.mdInsert('code')" title="Code">${Icons.code}</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('link')" title="Link">${Icons.tag}</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('image')" title="Image">${Icons.eye}</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('ul')" title="Unordered List">&#8226; List</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('ol')" title="Ordered List">1. List</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('blockquote')" title="Blockquote">&ldquo;&rdquo;</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('codeblock')" title="Code Block">&lt;/&gt;</button>
-                                            <button type="button" onclick="EditorMod.mdInsert('hr')" title="Horizontal Rule">&mdash;</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('link')" title="Link">${Icons.link}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('image')" title="Image">${Icons.image}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('ul')" title="Unordered List">${Icons.list}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('ol')" title="Ordered List">${Icons.listOrdered}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('blockquote')" title="Blockquote">${Icons.quote}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('codeblock')" title="Code Block">${Icons.codeblock}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('hr')" title="Horizontal Rule">${Icons.minus}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('clean')" title="Clear Formatting">${Icons.x}</button>
+                                            <button type="button" onclick="EditorMod.toggleFindReplace()" title="Find & Replace" style="margin-left:auto">${Icons.search} Find and Replace</button>
                                         </div>
                                         <textarea id="markdown-editor" class="markdown-textarea" placeholder="Write your story in Markdown...\n\n# Heading\n**bold** *italic* \`code\`\n\n- List item\n\n[link](url)\n![alt](image-url)\n\n\`\`\`js\nconst hello = 'world';\n\`\`\`"></textarea>
                                         <div class="markdown-help">
@@ -879,8 +879,8 @@
                                         <td class="td-title">${escapeHtml(u.username)}</td>
                                         <td><span class="badge badge-${u.role === 'Admin' ? 'tech' : u.role === 'Editor' ? 'design' : 'lifestyle'}">${u.role}</span></td>
                                         <td><div class="table-actions">
-                                            <button title="View Details" onclick="App.showUserDetailsModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')">${Icons.eye}</button>
-                                            <button title="Change Role" onclick="App.showChangeRoleModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')">${Icons.edit}</button>
+                                            <button title="Update Password" onclick="App.showUserDetailsModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')" style="width:auto;padding:0 10px;gap:6px">🔒 Update Password</button>
+                                            <button title="Update Role" onclick="App.showChangeRoleModal(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}','${u.role}')" style="width:auto;padding:0 10px;gap:6px">${Icons.edit} Update Role</button>
                                             <button title="Delete" class="danger" onclick="App.confirmDeleteUser(${u.id},'${escapeHtml(u.username).replace(/'/g, "\\'")}')">${Icons.trash}</button>
                                         </div></td>
                                     </tr>`).join('')}
@@ -896,13 +896,10 @@
             // -- Page: 404 --
             function render404() {
                 app.innerHTML = `
-                <div class="auth-page page-enter" style="margin-top:var(--nav-h)">
-                    <div class="empty-state">
-                        ${Icons.alertCircle}
-                        <h3 style="font-size:3rem;margin-bottom:4px">404</h3>
-                        <h3>Page Not Found</h3>
-                        <p>The page you're looking for doesn't exist.</p>
-                        <a href="#home" class="btn btn-primary" style="margin-top:8px">${Icons.arrowLeft} Go Home</a>
+                <div class="auth-page page-enter" style="margin-top:var(--nav-h); min-height: calc(100vh - var(--nav-h)); display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, rgba(var(--primary-rgb), 0.05) 0%, transparent 70%);">
+                    <div class="empty-state" style="padding: 4rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                        <img src="assets/img/404-pagenotfound.png" alt="404 Page Not Found" style="max-width: 100%; height: 400px; margin-bottom: 1.5rem; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                        <a href="#home" class="btn btn-primary" style="padding: 12px 24px; font-size: 1.1rem; border-radius: 8px; transition: transform 0.2s;">${Icons.arrowLeft} Go Home</a>
                     </div>
                 </div>`;
             }
@@ -1029,8 +1026,8 @@
                                 [{ list: 'ordered' }, { list: 'bullet' }],
                                 ['blockquote', 'code-block'],
                                 ['link', 'image'],
-                                ['find-replace'],
-                                ['clean']
+                                ['clean'],
+                                ['find-replace']
                             ],
                             handlers: {
                                 'find-replace': function () {
@@ -1050,7 +1047,14 @@
                         btn.setAttribute('type', 'button');
                     });
                     const frBtn = toolbar.querySelector('.ql-find-replace');
-                    if (frBtn) frBtn.innerHTML = Icons.search;
+                    if (frBtn) {
+                        frBtn.innerHTML = `${Icons.search} <span>Find and Replace</span>`;
+                        const group = frBtn.closest('.ql-formats');
+                        if (group) {
+                            group.style.float = 'right';
+                            group.style.marginRight = '0';
+                        }
+                    }
                 }, 0);
 
                 if (content) quill.root.innerHTML = content;
@@ -1064,8 +1068,9 @@
                                 e.preventDefault();
                                 const start = mdTA.selectionStart;
                                 const end = mdTA.selectionEnd;
-                                mdTA.value = mdTA.value.substring(0, start) + '    ' + mdTA.value.substring(end);
-                                mdTA.selectionStart = mdTA.selectionEnd = start + 4;
+                                if (!document.execCommand('insertText', false, '    ')) {
+                                    mdTA.setRangeText('    ', start, end, 'end');
+                                }
                             }
                         });
                     }
@@ -1106,15 +1111,22 @@
                     </div>
                     <div class="find-replace-row">
                         <input type="text" id="replace-input" class="find-replace-input" placeholder="Replace with...">
-                        <span role="button" id="replace-btn" class="btn btn-primary btn-sm" tabindex="0">Replace</span>
+                        <span role="button" id="replace-btn" class="btn btn-secondary btn-sm" tabindex="0">Replace</span>
                         <span role="button" id="replace-all-btn" class="btn btn-secondary btn-sm" tabindex="0">Replace All</span>
                         <span role="button" id="close-find-btn" class="btn-icon-sm" tabindex="0" title="Close">${Icons.x}</span>
                     </div>
                 `;
 
                 // Insert panel between toolbar and editor content
-                const toolbar = quill.getModule('toolbar').container;
-                toolbar.parentNode.insertBefore(panel, toolbar.nextSibling);
+                let toolbar;
+                if (currentMode === 'markdown') {
+                    toolbar = document.querySelector('.markdown-toolbar');
+                } else {
+                    toolbar = quill.getModule('toolbar').container;
+                }
+                if (toolbar) {
+                    toolbar.parentNode.insertBefore(panel, toolbar.nextSibling);
+                }
 
                 // Add event listeners programmatically
                 const findInput = document.getElementById('find-input');
@@ -1189,7 +1201,9 @@
                 }
 
                 // Use plain text content for case-sensitive searching
-                const text = quill.getText();
+                const text = currentMode === 'markdown'
+                    ? document.getElementById('markdown-editor').value
+                    : quill.getText();
                 matches = [];
                 let index = 0;
 
@@ -1222,7 +1236,13 @@
 
                 if (shouldHighlight) {
                     const term = findInput.value;
-                    quill.setSelection(matches[currentMatchIndex], term.length);
+                    if (currentMode === 'markdown') {
+                        const ta = document.getElementById('markdown-editor');
+                        ta.focus();
+                        ta.setSelectionRange(matches[currentMatchIndex], matches[currentMatchIndex] + term.length);
+                    } else {
+                        quill.setSelection(matches[currentMatchIndex], term.length);
+                    }
                 }
             }
 
@@ -1239,10 +1259,19 @@
                 clearHighlights();
 
                 const term = findInput.value;
-                matches.forEach(index => {
-                    quill.formatText(index, term.length, 'background', 'yellow');
-                    highlightedRanges.push({ index, length: term.length });
-                });
+                if (currentMode === 'markdown') {
+                    // Cannot highlight multiple ranges natively in textarea, select the first one if any
+                    if (matches.length > 0) {
+                        const ta = document.getElementById('markdown-editor');
+                        ta.focus();
+                        ta.setSelectionRange(matches[0], matches[0] + term.length);
+                    }
+                } else {
+                    matches.forEach(index => {
+                        quill.formatText(index, term.length, 'background', 'yellow');
+                        highlightedRanges.push({ index, length: term.length });
+                    });
+                }
             }
 
             function replace() {
@@ -1259,8 +1288,14 @@
                 // Preserve current match index to highlight the next one after replacement
                 const oldIndex = currentMatchIndex;
 
-                quill.deleteText(index, term.length);
-                quill.insertText(index, replacement);
+                if (currentMode === 'markdown') {
+                    const ta = document.getElementById('markdown-editor');
+                    const text = ta.value;
+                    ta.value = text.substring(0, index) + replacement + text.substring(index + term.length);
+                } else {
+                    quill.deleteText(index, term.length);
+                    quill.insertText(index, replacement);
+                }
 
                 // Re-calculate matches
                 updateMatches(false);
@@ -1281,7 +1316,9 @@
                 const replacement = replaceInput.value;
                 if (!term) return;
 
-                const text = quill.getText();
+                const text = currentMode === 'markdown'
+                    ? document.getElementById('markdown-editor').value
+                    : quill.getText();
                 const allMatches = [];
                 let index = 0;
 
@@ -1291,9 +1328,18 @@
                 }
 
                 // Apply replacements backwards to avoid index shifts
-                for (let i = allMatches.length - 1; i >= 0; i--) {
-                    quill.deleteText(allMatches[i], term.length);
-                    quill.insertText(allMatches[i], replacement);
+                if (currentMode === 'markdown') {
+                    const ta = document.getElementById('markdown-editor');
+                    let textValue = ta.value;
+                    for (let i = allMatches.length - 1; i >= 0; i--) {
+                        textValue = textValue.substring(0, allMatches[i]) + replacement + textValue.substring(allMatches[i] + term.length);
+                    }
+                    ta.value = textValue;
+                } else {
+                    for (let i = allMatches.length - 1; i >= 0; i--) {
+                        quill.deleteText(allMatches[i], term.length);
+                        quill.insertText(allMatches[i], replacement);
+                    }
                 }
 
                 updateMatches(false);
@@ -1379,6 +1425,12 @@
 
                 if (!richtextWrapper || !markdownWrapper || !previewWrapper) return;
 
+                // Close find/replace panel when switching modes
+                const panel = document.getElementById('quill-find-replace-panel');
+                if (panel) {
+                    toggleFindReplace();
+                }
+
                 // Sync content before switching
                 if (currentMode === 'richtext' && mode === 'markdown') {
                     // Convert Quill HTML → Markdown
@@ -1459,6 +1511,22 @@
                         insert = '*' + (selected || 'italic text') + '*';
                         cursorOffset = selected ? insert.length : 1;
                         break;
+                    case 'underline':
+                        insert = '<u>' + (selected || 'underline text') + '</u>';
+                        cursorOffset = selected ? insert.length : 3;
+                        break;
+                    case 'strike':
+                        insert = '~~' + (selected || 'strikethrough text') + '~~';
+                        cursorOffset = selected ? insert.length : 2;
+                        break;
+                    case 'color':
+                        insert = '<span style="color:red">' + (selected || 'colored text') + '</span>';
+                        cursorOffset = selected ? insert.length : 24;
+                        break;
+                    case 'background':
+                        insert = '<span style="background-color:yellow">' + (selected || 'highlighted text') + '</span>';
+                        cursorOffset = selected ? insert.length : 38;
+                        break;
                     case 'code':
                         insert = '`' + (selected || 'code') + '`';
                         cursorOffset = selected ? insert.length : 1;
@@ -1491,12 +1559,31 @@
                         insert = '\n\n---\n\n';
                         cursorOffset = insert.length;
                         break;
+                    case 'clean':
+                        if (selected) {
+                            insert = selected
+                                .replace(/[*_~`]/g, '')
+                                .replace(/<[^>]+>/g, '')
+                                .replace(/^#{1,6}\s+/gm, '')
+                                .replace(/^[-*+]\s+/gm, '')
+                                .replace(/^\d+\.\s+/gm, '')
+                                .replace(/^>\s+/gm, '');
+                        } else {
+                            insert = '';
+                        }
+                        cursorOffset = insert.length;
+                        break;
                     default:
                         return;
                 }
 
-                ta.value = before + insert + after;
                 ta.focus();
+                ta.setSelectionRange(start, end);
+
+                // Use execCommand to preserve undo history. Fallback to setRangeText.
+                if (!document.execCommand('insertText', false, insert)) {
+                    ta.setRangeText(insert, start, end, 'select');
+                }
 
                 if (selected) {
                     ta.selectionStart = start;
@@ -1868,7 +1955,7 @@
                 document.querySelectorAll('.cover-tab').forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.getElementById('cover-tab-' + tab);
                 if (activeBtn) activeBtn.classList.add('active');
-                
+
                 const urlPanel = document.getElementById('cover-url-panel');
                 const uploadPanel = document.getElementById('cover-upload-panel');
                 if (urlPanel) urlPanel.classList.toggle('hidden', tab !== 'url');
@@ -1890,13 +1977,13 @@
                 }
 
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const img = new Image();
-                    img.onload = function() {
+                    img.onload = function () {
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-                        
+
                         // Max width 1200px for cover images to keep DB size small
                         const MAX_WIDTH = 1200;
                         if (width > MAX_WIDTH) {
@@ -1911,12 +1998,12 @@
 
                         // Compress as WebP for optimal size, or JPEG fallback
                         const dataUrl = canvas.toDataURL('image/webp', 0.8) || canvas.toDataURL('image/jpeg', 0.8);
-                        
+
                         const coverInput = document.getElementById('post-cover');
                         if (coverInput) coverInput.value = dataUrl;
                         updateCoverPreview();
                         UI.showToast('Image uploaded and optimized!', 'success');
-                        
+
                         // Switch back to URL tab to show the data URL
                         switchCoverTab('url');
                     };
@@ -1931,7 +2018,7 @@
                 const url = input.value.trim();
                 const container = document.getElementById('cover-preview-container');
                 const img = document.getElementById('cover-preview-img');
-                
+
                 if (container && img) {
                     if (url) {
                         img.src = url;

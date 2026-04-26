@@ -6,7 +6,7 @@
 
 /* ---------- Theme Variables ---------- */
 :root {
-    --bg-primary: #f7f8fc;
+    --bg-primary: #b6c4c5;
     --bg-secondary: #ffffff;
     --bg-tertiary: #eef1f6;
     --bg-input: #f1f4f9;
@@ -298,6 +298,7 @@ p {
     justify-content: center;
     width: 40px;
     height: 40px;
+    padding: 0 !important;
     border-radius: var(--radius-sm);
     transition: all var(--transition);
     color: var(--text-secondary)
@@ -2139,10 +2140,21 @@ p {
 
 /* ---------- Quill Find-Replace Toolbar Button ---------- */
 .ql-find-replace {
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    width: 28px !important;
+    width: auto !important;
+    min-width: max-content !important;
+    white-space: nowrap !important;
+    gap: 6px;
+    padding: 0 8px !important;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ql-find-replace:hover {
+    color: var(--primary) !important;
 }
 
 .ql-find-replace svg {
