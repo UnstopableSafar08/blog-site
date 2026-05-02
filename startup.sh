@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#
 # # Navigate to the directory where this script is located
 # cd "$(dirname "${BASH_SOURCE[0]}")"
 
