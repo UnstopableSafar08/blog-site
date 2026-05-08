@@ -115,7 +115,14 @@
 
             // Mobile Menu
             document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-                document.getElementById('nav-links').classList.toggle('open');
+                const navLinks = document.getElementById('nav-links');
+                navLinks.classList.toggle('open');
+                clearTimeout(window.mobileMenuTimeout);
+                if (navLinks.classList.contains('open')) {
+                    window.mobileMenuTimeout = setTimeout(() => {
+                        navLinks.classList.remove('open');
+                    }, 5000);
+                }
             });
         });
     </script>
