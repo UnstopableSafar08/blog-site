@@ -36,6 +36,23 @@
                 <a href="#home" id="nav-home">Home</a>
                 <a href="about.html" id="nav-about">About</a>
                 <a href="contact.html" id="nav-contact">Contact</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="more-links-btn" aria-haspopup="true" aria-expanded="false">
+                        More Links
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;margin-left:4px;">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="more-links-menu" role="menu">
+                        <a href="https://www.linkedin.com/in/sagarmalla08/" target="_blank" rel="noopener" role="menuitem">LinkedIn</a>
+                        <a href="https://github.com/UnstopableSafar08" target="_blank" rel="noopener" role="menuitem">GitHub</a>
+                        <a href="https://sagarmalla.info.np" target="_blank" rel="noopener" role="menuitem">Portfolio</a>
+                        <a href="https://notes.sagarmalla.info.np" target="_blank" rel="noopener" role="menuitem">Note Maker</a>
+                        <a href="https://blogs.sagarmalla.info.np" target="_blank" rel="noopener" role="menuitem">Blogs</a>
+                        <a href="https://diff.sagarmalla.info.np" target="_blank" rel="noopener" role="menuitem">Difference Checker</a>
+                        <a href="https://hash.sagarmalla.info.np" target="_blank" rel="noopener" role="menuitem">Secure Hash Generator</a>
+                    </div>
+                </div>
                 <a href="#admin/dashboard" id="nav-admin" class="hidden">Dashboard</a>
                 <a href="login.html" id="nav-login">Login</a>
                 <button id="nav-logout" class="hidden" onclick="UI_UTILS.handleLogout()">Logout</button>
@@ -89,6 +106,10 @@
     <!-- ========== Markdown Support Libraries ========== -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/turndown/dist/turndown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
+
+    <!-- ========== Monaco Editor Loader ========== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 
     <!-- ========== EmailJS SDK for client-side email sending ========== -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -107,7 +128,7 @@
                 }).join(''));
                 window.currentGoogleUser = JSON.parse(jsonPayload);
                 window.dispatchEvent(new Event('hashchange'));
-            } catch (e) { console.error("Google Auth Error", e); }
+            } catch (e) { console.error("Google Auth Error"); }
         };
     </script>
 
@@ -191,7 +212,7 @@
                 <button class="modal-close" onclick="UI.closeModal()">${Icons.x}</button>
                 <h3>${escapeHtml(title)}</h3>
                 <div class="modal-body" style="margin-bottom:24px">${message}</div>
-                <div class="modal-actions">${actionsHtml}</div>`;
+                <div class="modal-actions" onclick="event.stopPropagation()">${actionsHtml}</div>`;
                 modalOverlay.classList.add('visible');
             }
             function closeModal(e) {
@@ -589,10 +610,15 @@
                     { href: '#admin/users', icon: Icons.users, label: 'Users' },
                     { href: '#admin/settings', icon: Icons.settings, label: 'Settings' }
                 ];
-                return `<aside class="admin-sidebar" id="admin-sidebar">`
-                    + `<div class="sidebar-section" style="margin-top:0;margin-bottom:16px">Menu</div>`
-                    + items.map(i => `<a href="${i.href}" class="${active === i.label ? 'active' : ''}" onclick="App.closeAdminSidebar()">${i.icon}${i.label}</a>`).join('')
-                    + `<div style="margin-top:auto;padding-top:20px"><a href="#" onclick="App.logout();return false">${Icons.logout}Logout</a></div>`
+                return `<aside class="admin-sidebar" id="admin-sidebar">
+                    <div class="sidebar-collapse-toggle" onclick="App.toggleSidebarCollapse()" title="Collapse Sidebar" id="sidebar-collapse-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="collapse-icon" id="collapse-icon-left" data-tooltip="Expand Sidebar"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="collapse-icon hidden" id="collapse-icon-right" data-tooltip="Collapse Sidebar"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        <span class="sidebar-collapse-text" id="sidebar-collapse-text">Collapse Sidebar</span>
+                    </div>
+                    <div class="sidebar-section sidebar-section-collapsed" style="margin-top:0;margin-bottom:16px" id="sidebar-menu-label">Menu</div>`
+                    + items.map(i => `<a href="${i.href}" class="${active === i.label ? 'active' : ''}" onclick="App.closeAdminSidebar()" title="${i.label}"><span class="sidebar-icon" data-tooltip="${i.label}">${i.icon}</span><span class="sidebar-label">${i.label}</span></a>`).join('')
+                    + `<div style="margin-top:auto;padding-top:20px" id="sidebar-logout-container"><a href="#" onclick="App.logout();return false" title="Logout"><span class="sidebar-icon" data-tooltip="Logout">${Icons.logout}</span><span class="sidebar-label">Logout</span></a></div>`
                     + `</aside>`
                     + `<div class="admin-sidebar-overlay" id="admin-sidebar-overlay" onclick="App.closeAdminSidebar()"></div>`;
             }
@@ -679,16 +705,18 @@
                         ${posts.length > 0 ? `
                         <div class="data-table-wrap">
                             <table class="data-table">
-                                <thead><tr><th>Title</th><th>Slug</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                <thead><tr><th data-label="Title">Title</th><th data-label="Slug">Slug</th><th data-label="Category">Category</th><th data-label="Status">Status</th><th data-label="Date">Date</th><th data-label="Actions">Actions</th></tr></thead>
                                 <tbody>
                                     ${posts.map(p => `<tr>
-                                        <td class="td-title" title="${escapeHtml(p.title)}">${escapeHtml(truncate(p.title, 30))}</td>
-                                        <td style="color:var(--text-tertiary);font-size:.8rem;font-family:var(--font-mono)" title="${escapeHtml(p.slug)}">${escapeHtml(truncate(p.slug, 30))}</td>
-                                        <td><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
-                                        <td><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
-                                        <td style="white-space:nowrap">${formatDate(p.created_at)}</td>
-                                        <td><div class="table-actions">
-                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')" style="min-width: max-content; padding: 0 10px; gap: 6px;">${Icons.eye} View</button>
+                                        <td class="td-title" data-label="Title">
+                                            <a href="#post/${p.slug}" target="_blank" rel="noopener" title="View post: ${escapeHtml(p.title)}" style="color:inherit;text-decoration:none;font-weight:600">${escapeHtml(truncate(p.title, 25))}</a>
+                                        </td>
+                                        <td style="color:var(--text-tertiary);font-size:.8rem;font-family:var(--font-mono)" data-label="Slug" title="${escapeHtml(p.slug)}">${escapeHtml(truncate(p.slug, 15))}</td>
+                                        <td data-label="Category"><span class="badge badge-${categoryClass(p.category)}">${escapeHtml(p.category)}</span></td>
+                                        <td data-label="Status"><span class="badge badge-status badge-${p.status}">${p.status}</span></td>
+                                        <td style="white-space:nowrap" data-label="Date">${formatDate(p.created_at)}</td>
+                                        <td data-label="Actions"><div class="table-actions">
+                                            <button title="View" onclick="window.open('#post/${p.slug}','_blank')" style="min-width: max-content; padding: 0 10px; gap: 6px;">${Icons.eye}</button>
                                             <button title="Edit" onclick="Router.navigate('admin/edit/${p.id}')">${Icons.edit}</button>
                                             <button title="${p.status === 'published' ? 'Set Draft' : 'Publish'}" onclick="App.toggleStatus(${p.id},'${p.status}')">${p.status === 'published' ? Icons.eyeOff : Icons.eye}</button>
                                             <button title="Delete" class="danger" onclick="App.confirmDelete(${p.id},'${escapeHtml(p.title).replace(/'/g, "\\'")}')">${Icons.trash}</button>
@@ -799,6 +827,7 @@
                                 <div id="editor-markdown-wrapper" class="hidden">
                                     <div class="markdown-editor-container">
                                         <div class="markdown-toolbar">
+                                            <button type="button" class="import-md-btn" onclick="document.getElementById('md-import').click()" title="Import .md file">${Icons.upload || ''} Import MD</button>
                                             <button type="button" onclick="EditorMod.mdInsert('heading')" title="Heading">${Icons.fileText} H</button>
                                             <button type="button" onclick="EditorMod.mdInsert('bold')" title="Bold"><strong>B</strong></button>
                                             <button type="button" onclick="EditorMod.mdInsert('italic')" title="Italic"><em>I</em></button>
@@ -809,6 +838,7 @@
                                             <button type="button" onclick="EditorMod.mdInsert('code')" title="Code">${Icons.code}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('link')" title="Link">${Icons.link}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('image')" title="Image">${Icons.image}</button>
+                                            <button type="button" onclick="EditorMod.mdInsert('table')" title="Table">${Icons.grid}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('ul')" title="Unordered List">${Icons.list}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('ol')" title="Ordered List">${Icons.listOrdered}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('blockquote')" title="Blockquote">${Icons.quote}</button>
@@ -816,10 +846,11 @@
                                             <button type="button" onclick="EditorMod.mdInsert('hr')" title="Horizontal Rule">${Icons.minus}</button>
                                             <button type="button" onclick="EditorMod.mdInsert('clean')" title="Clear Formatting">${Icons.x}</button>
                                             <button type="button" onclick="EditorMod.toggleFindReplace()" title="Find & Replace" style="margin-left:auto">${Icons.search} Find and Replace</button>
+                                            <input type="file" id="md-import" accept=".md" style="display:none" />
                                         </div>
-                                        <textarea id="markdown-editor" class="markdown-textarea" placeholder="Write your story in Markdown...\n\n# Heading\n**bold** *italic* \`code\`\n\n- List item\n\n[link](url)\n![alt](image-url)\n\n\`\`\`js\nconst hello = 'world';\n\`\`\`"></textarea>
+                                        <div id="monaco-editor-container"></div>
                                         <div class="markdown-help">
-                                            ${Icons.info} <span>Supports GitHub Flavored Markdown. Use <kbd>Tab</kbd> for indentation.</span>
+                                            ${Icons.info} <span>Professional Markdown Editor (Monaco). Use <kbd>Ctrl/Cmd</kbd> + <kbd>F</kbd> for advanced search.</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1005,14 +1036,15 @@
         // ==========================================
         const EditorMod = (() => {
             let quill = null;
+            let monacoEditor = null;
             let currentMatchIndex = 0;
             let matches = [];
 
             /**
-             * Initialize Quill WYSIWYG editor on a DOM element.
-             * Uses the 'snow' theme with a curated toolbar.
+             * Initialize Monaco and Quill editors.
              */
             function init(selector, content = '') {
+                // Initialize Quill
                 quill = new Quill(selector, {
                     theme: 'snow',
                     placeholder: 'Write your story...',
@@ -1038,45 +1070,64 @@
                     }
                 });
 
-                // CRITICAL: Set type="button" on ALL toolbar buttons so they
-                // don't submit the parent <form> when clicked.
-                // Also add the search icon to the custom find-replace button.
+                // Set content
+                if (content) quill.root.innerHTML = content;
+
+                // Load Monaco
+                if (typeof require !== 'undefined') {
+                    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+                    require(['vs/editor/editor.main'], function () {
+                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                        monacoEditor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                            value: content ? htmlToMarkdown(content) : '',
+                            language: 'markdown',
+                            theme: isDark ? 'vs-dark' : 'vs',
+                            automaticLayout: true,
+                            minimap: { enabled: false },
+                            wordWrap: 'on',
+                            fontSize: 14,
+                            lineNumbers: 'on',
+                            scrollBeyondLastLine: false,
+                            padding: { top: 10, bottom: 10 }
+                        });
+
+                        
+                        // Handle .md import
+                        const mdInput = document.getElementById('md-import');
+                        if (mdInput) {
+                            mdInput.addEventListener('change', (e) => {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    const text = evt.target.result;
+                                    if (monacoEditor) {
+                                        monacoEditor.setValue(text);
+                                        // switch to markdown mode if not already
+                                        if (currentMode !== 'markdown') EditorMod.switchMode('markdown');
+                                    }
+                                };
+                                reader.readAsText(file);
+                                // reset input so same file can be selected again
+                                e.target.value = '';
+                            });
+                        }
+
+                    });
+                }
+
+                // Quill toolbar buttons type fix
                 setTimeout(() => {
                     const toolbar = quill.getModule('toolbar').container;
-                    toolbar.querySelectorAll('button').forEach(btn => {
-                        btn.setAttribute('type', 'button');
-                    });
+                    toolbar.querySelectorAll('button').forEach(btn => btn.setAttribute('type', 'button'));
                     const frBtn = toolbar.querySelector('.ql-find-replace');
                     if (frBtn) {
                         frBtn.innerHTML = `${Icons.search} <span>Find and Replace</span>`;
                         const group = frBtn.closest('.ql-formats');
-                        if (group) {
-                            group.style.float = 'right';
-                            group.style.marginRight = '0';
-                        }
+                        if (group) { group.style.float = 'right'; group.style.marginRight = '0'; }
                     }
                 }, 0);
 
-                if (content) quill.root.innerHTML = content;
-
-                // Setup Tab indentation for markdown editor textarea
-                setTimeout(() => {
-                    const mdTA = document.getElementById('markdown-editor');
-                    if (mdTA) {
-                        mdTA.addEventListener('keydown', (e) => {
-                            if (e.key === 'Tab') {
-                                e.preventDefault();
-                                const start = mdTA.selectionStart;
-                                const end = mdTA.selectionEnd;
-                                if (!document.execCommand('insertText', false, '    ')) {
-                                    mdTA.setRangeText('    ', start, end, 'end');
-                                }
-                            }
-                        });
-                    }
-                }, 100);
-
-                // Reset mode to richtext for new editor instances
                 currentMode = 'richtext';
             }
 
@@ -1202,7 +1253,7 @@
 
                 // Use plain text content for case-sensitive searching
                 const text = currentMode === 'markdown'
-                    ? document.getElementById('markdown-editor').value
+                    ? (monacoEditor ? monacoEditor.getValue() : '')
                     : quill.getText();
                 matches = [];
                 let index = 0;
@@ -1236,11 +1287,14 @@
 
                 if (shouldHighlight) {
                     const term = findInput.value;
-                    if (currentMode === 'markdown') {
-                        const ta = document.getElementById('markdown-editor');
-                        ta.focus();
-                        ta.setSelectionRange(matches[currentMatchIndex], matches[currentMatchIndex] + term.length);
-                    } else {
+                    if (currentMode === 'markdown' && monacoEditor) {
+                        const model = monacoEditor.getModel();
+                        const matches = model.findMatches(term, true, false, false, null, true);
+                        if (matches[currentMatchIndex]) {
+                            monacoEditor.setSelection(matches[currentMatchIndex].range);
+                            monacoEditor.revealRangeInCenter(matches[currentMatchIndex].range);
+                        }
+                    } else if (quill) {
                         quill.setSelection(matches[currentMatchIndex], term.length);
                     }
                 }
@@ -1259,14 +1313,12 @@
                 clearHighlights();
 
                 const term = findInput.value;
-                if (currentMode === 'markdown') {
-                    // Cannot highlight multiple ranges natively in textarea, select the first one if any
-                    if (matches.length > 0) {
-                        const ta = document.getElementById('markdown-editor');
-                        ta.focus();
-                        ta.setSelectionRange(matches[0], matches[0] + term.length);
-                    }
-                } else {
+                if (currentMode === 'markdown' && monacoEditor) {
+                    // Monaco handles search highlighting natively or via decorations
+                    // For now, let's just trigger the native find widget
+                    monacoEditor.getAction('actions.find').run();
+                    toggleFindReplace();
+                } else if (quill) {
                     matches.forEach(index => {
                         quill.formatText(index, term.length, 'background', 'yellow');
                         highlightedRanges.push({ index, length: term.length });
@@ -1288,11 +1340,17 @@
                 // Preserve current match index to highlight the next one after replacement
                 const oldIndex = currentMatchIndex;
 
-                if (currentMode === 'markdown') {
-                    const ta = document.getElementById('markdown-editor');
-                    const text = ta.value;
-                    ta.value = text.substring(0, index) + replacement + text.substring(index + term.length);
-                } else {
+                if (currentMode === 'markdown' && monacoEditor) {
+                    const model = monacoEditor.getModel();
+                    const matches = model.findMatches(term, true, false, false, null, true);
+                    if (matches[currentMatchIndex]) {
+                        monacoEditor.executeEdits('find-replace', [{
+                            range: matches[currentMatchIndex].range,
+                            text: replacement,
+                            forceMoveMarkers: true
+                        }]);
+                    }
+                } else if (quill) {
                     quill.deleteText(index, term.length);
                     quill.insertText(index, replacement);
                 }
@@ -1328,14 +1386,16 @@
                 }
 
                 // Apply replacements backwards to avoid index shifts
-                if (currentMode === 'markdown') {
-                    const ta = document.getElementById('markdown-editor');
-                    let textValue = ta.value;
-                    for (let i = allMatches.length - 1; i >= 0; i--) {
-                        textValue = textValue.substring(0, allMatches[i]) + replacement + textValue.substring(allMatches[i] + term.length);
-                    }
-                    ta.value = textValue;
-                } else {
+                if (currentMode === 'markdown' && monacoEditor) {
+                    const model = monacoEditor.getModel();
+                    const matches = model.findMatches(term, true, false, false, null, true);
+                    const edits = matches.map(m => ({
+                        range: m.range,
+                        text: replacement,
+                        forceMoveMarkers: true
+                    }));
+                    monacoEditor.executeEdits('find-replace-all', edits);
+                } else if (quill) {
                     for (let i = allMatches.length - 1; i >= 0; i--) {
                         quill.deleteText(allMatches[i], term.length);
                         quill.insertText(allMatches[i], replacement);
@@ -1358,6 +1418,12 @@
                         bulletListMarker: '-',
                         hr: '---',
                     });
+                    
+                    // Add GFM plugin for tables
+                    if (typeof turndownPluginGfm !== 'undefined') {
+                        turndownService.use(turndownPluginGfm.gfm);
+                    }
+
                     // Preserve code blocks with language
                     turndownService.addRule('codeBlock', {
                         filter: function (node) {
@@ -1394,7 +1460,7 @@
                     let cleaned = html.replace(/<p><br><\/p>/g, '\n');
                     return td.turndown(cleaned);
                 } catch (e) {
-                    console.error('HTML to Markdown conversion error:', e);
+                    console.error('HTML to Markdown conversion error');
                     return html;
                 }
             }
@@ -1406,12 +1472,13 @@
                     marked.setOptions({
                         breaks: true,
                         gfm: true,
+                        tables: true,
                         headerIds: false,
                         mangle: false,
                     });
                     return marked.parse(md);
                 } catch (e) {
-                    console.error('Markdown to HTML conversion error:', e);
+                    console.error('Markdown to HTML conversion error');
                     return md;
                 }
             }
@@ -1420,40 +1487,27 @@
                 const richtextWrapper = document.getElementById('editor-richtext-wrapper');
                 const markdownWrapper = document.getElementById('editor-markdown-wrapper');
                 const previewWrapper = document.getElementById('editor-preview-wrapper');
-                const mdEditor = document.getElementById('markdown-editor');
                 const preview = document.getElementById('markdown-preview');
 
                 if (!richtextWrapper || !markdownWrapper || !previewWrapper) return;
 
-                // Close find/replace panel when switching modes
+                // Close find/replace panel
                 const panel = document.getElementById('quill-find-replace-panel');
-                if (panel) {
-                    toggleFindReplace();
-                }
+                if (panel) toggleFindReplace();
 
-                // Sync content before switching
+                // Sync content
                 if (currentMode === 'richtext' && mode === 'markdown') {
-                    // Convert Quill HTML → Markdown
                     const html = quill ? quill.root.innerHTML : '';
-                    if (mdEditor) mdEditor.value = htmlToMarkdown(html);
+                    if (monacoEditor) monacoEditor.setValue(htmlToMarkdown(html));
                 } else if (currentMode === 'richtext' && mode === 'preview') {
-                    // Show Quill's HTML as preview
                     const html = quill ? quill.root.innerHTML : '';
-                    if (preview) preview.innerHTML = html || '<p style="color:var(--text-tertiary)">Nothing to preview yet.</p>';
+                    if (preview) preview.innerHTML = html || '<p>Nothing to preview yet.</p>';
                 } else if (currentMode === 'markdown' && mode === 'richtext') {
-                    // Convert Markdown → HTML and load into Quill
-                    const md = mdEditor ? mdEditor.value : '';
-                    const html = markdownToHtml(md);
-                    if (quill) quill.root.innerHTML = html;
+                    const md = monacoEditor ? monacoEditor.getValue() : '';
+                    if (quill) quill.root.innerHTML = markdownToHtml(md);
                 } else if (currentMode === 'markdown' && mode === 'preview') {
-                    // Convert Markdown → HTML for preview
-                    const md = mdEditor ? mdEditor.value : '';
-                    const html = markdownToHtml(md);
-                    if (preview) preview.innerHTML = html || '<p style="color:var(--text-tertiary)">Nothing to preview yet.</p>';
-                } else if (currentMode === 'preview' && mode === 'richtext') {
-                    // No sync needed — Quill already has latest from before preview
-                } else if (currentMode === 'preview' && mode === 'markdown') {
-                    // No sync needed — markdown textarea already has latest
+                    const md = monacoEditor ? monacoEditor.getValue() : '';
+                    if (preview) preview.innerHTML = markdownToHtml(md);
                 }
 
                 // Toggle visibility
@@ -1486,120 +1540,44 @@
              * Wraps selected text or inserts markdown syntax at cursor.
              */
             function mdInsert(type) {
-                const ta = document.getElementById('markdown-editor');
-                if (!ta) return;
-
-                const start = ta.selectionStart;
-                const end = ta.selectionEnd;
-                const selected = ta.value.substring(start, end);
-                const before = ta.value.substring(0, start);
-                const after = ta.value.substring(end);
-
-                let insert = '';
+                if (!monacoEditor) return;
+                const selection = monacoEditor.getSelection();
+                const selectedText = monacoEditor.getModel().getValueInRange(selection);
+                
+                let insertText = '';
                 let cursorOffset = 0;
+                let selectionOffset = 0;
 
                 switch (type) {
-                    case 'heading':
-                        insert = '## ' + (selected || 'Heading');
-                        cursorOffset = selected ? insert.length : 3;
-                        break;
-                    case 'bold':
-                        insert = '**' + (selected || 'bold text') + '**';
-                        cursorOffset = selected ? insert.length : 2;
-                        break;
-                    case 'italic':
-                        insert = '*' + (selected || 'italic text') + '*';
-                        cursorOffset = selected ? insert.length : 1;
-                        break;
-                    case 'underline':
-                        insert = '<u>' + (selected || 'underline text') + '</u>';
-                        cursorOffset = selected ? insert.length : 3;
-                        break;
-                    case 'strike':
-                        insert = '~~' + (selected || 'strikethrough text') + '~~';
-                        cursorOffset = selected ? insert.length : 2;
-                        break;
-                    case 'color':
-                        insert = '<span style="color:red">' + (selected || 'colored text') + '</span>';
-                        cursorOffset = selected ? insert.length : 24;
-                        break;
-                    case 'background':
-                        insert = '<span style="background-color:yellow">' + (selected || 'highlighted text') + '</span>';
-                        cursorOffset = selected ? insert.length : 38;
-                        break;
-                    case 'code':
-                        insert = '`' + (selected || 'code') + '`';
-                        cursorOffset = selected ? insert.length : 1;
-                        break;
-                    case 'link':
-                        insert = '[' + (selected || 'link text') + '](url)';
-                        cursorOffset = selected ? insert.length : 1;
-                        break;
-                    case 'image':
-                        insert = '![' + (selected || 'alt text') + '](image-url)';
-                        cursorOffset = selected ? insert.length : 2;
-                        break;
-                    case 'ul':
-                        insert = '\n- ' + (selected || 'List item');
-                        cursorOffset = insert.length;
-                        break;
-                    case 'ol':
-                        insert = '\n1. ' + (selected || 'List item');
-                        cursorOffset = insert.length;
-                        break;
-                    case 'blockquote':
-                        insert = '\n> ' + (selected || 'Quote');
-                        cursorOffset = insert.length;
-                        break;
-                    case 'codeblock':
-                        insert = '\n```\n' + (selected || 'code here') + '\n```\n';
-                        cursorOffset = selected ? insert.length : 5;
-                        break;
-                    case 'hr':
-                        insert = '\n\n---\n\n';
-                        cursorOffset = insert.length;
-                        break;
-                    case 'clean':
-                        if (selected) {
-                            insert = selected
-                                .replace(/[*_~`]/g, '')
-                                .replace(/<[^>]+>/g, '')
-                                .replace(/^#{1,6}\s+/gm, '')
-                                .replace(/^[-*+]\s+/gm, '')
-                                .replace(/^\d+\.\s+/gm, '')
-                                .replace(/^>\s+/gm, '');
-                        } else {
-                            insert = '';
-                        }
-                        cursorOffset = insert.length;
-                        break;
-                    default:
-                        return;
+                    case 'heading': insertText = `## ${selectedText || 'Heading'}`; break;
+                    case 'bold': insertText = `**${selectedText || 'bold text'}**`; break;
+                    case 'italic': insertText = `*${selectedText || 'italic text'}*`; break;
+                    case 'underline': insertText = `<u>${selectedText || 'underline text'}</u>`; break;
+                    case 'color': insertText = `\<span style="color:#ff0000"\>${selectedText || 'colored text'}\</span\>`; break;
+                    case 'background': insertText = `\<span style="background:#ffff00"\>${selectedText || 'bg colored text'}\</span\>`; break;
+                    case 'code': insertText = `\`${selectedText || 'code'}\``; break;
+                    case 'link': insertText = `[${selectedText || 'link text'}](url)`; break;
+                    case 'image': insertText = `![${selectedText || 'alt text'}](image-url)`; break;
+                    case 'table': insertText = `\n| Header | Header |\n| :--- | :--- |\n| Cell | Cell |\n`; break;
+                    case 'ul': insertText = `\n- ${selectedText || 'List item'}`; break;
+                    case 'ol': insertText = `\n1. ${selectedText || 'List item'}`; break;
+                    case 'blockquote': insertText = `\n> ${selectedText || 'Quote'}`; break;
+                    case 'codeblock': insertText = `\n\`\`\`\n${selectedText || 'code here'}\n\`\`\`\n`; break;
+                    case 'hr': insertText = `\n\n---\n\n`; break;
+                    case 'clean': insertText = selectedText.replace(/[*_~`]/g, ''); break;
                 }
 
-                ta.focus();
-                ta.setSelectionRange(start, end);
-
-                // Use execCommand to preserve undo history. Fallback to setRangeText.
-                if (!document.execCommand('insertText', false, insert)) {
-                    ta.setRangeText(insert, start, end, 'select');
-                }
-
-                if (selected) {
-                    ta.selectionStart = start;
-                    ta.selectionEnd = start + insert.length;
-                } else {
-                    ta.selectionStart = ta.selectionEnd = start + cursorOffset;
-                }
+                monacoEditor.executeEdits('my-source', [{
+                    range: selection,
+                    text: insertText,
+                    forceMoveMarkers: true
+                }]);
+                monacoEditor.focus();
             }
 
-            /**
-             * Get content as HTML regardless of current mode.
-             */
             function getContent() {
                 if (currentMode === 'markdown') {
-                    const mdEditor = document.getElementById('markdown-editor');
-                    return mdEditor ? markdownToHtml(mdEditor.value) : '';
+                    return monacoEditor ? markdownToHtml(monacoEditor.getValue()) : '';
                 }
                 return quill ? quill.root.innerHTML : '';
             }
@@ -2065,6 +2043,39 @@
                 }
             }
 
+            function toggleSidebarCollapse() {
+                const sidebar = document.getElementById('admin-sidebar');
+                const leftIcon = document.getElementById('collapse-icon-left');
+                const rightIcon = document.getElementById('collapse-icon-right');
+                const collapseText = document.getElementById('sidebar-collapse-text');
+                const collapseBtn = document.getElementById('sidebar-collapse-btn');
+                if (sidebar) {
+                    sidebar.classList.toggle('collapsed');
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+                    if (leftIcon) leftIcon.classList.toggle('hidden', isCollapsed);
+                    if (rightIcon) rightIcon.classList.toggle('hidden', !isCollapsed);
+                    if (collapseText) collapseText.textContent = isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+                    if (collapseBtn) collapseBtn.title = isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+                }
+            }
+
+            function applySidebarCollapse() {
+                const sidebar = document.getElementById('admin-sidebar');
+                const leftIcon = document.getElementById('collapse-icon-left');
+                const rightIcon = document.getElementById('collapse-icon-right');
+                const collapseText = document.getElementById('sidebar-collapse-text');
+                const collapseBtn = document.getElementById('sidebar-collapse-btn');
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (sidebar) {
+                    sidebar.classList.toggle('collapsed', isCollapsed);
+                    if (leftIcon) leftIcon.classList.toggle('hidden', isCollapsed);
+                    if (rightIcon) rightIcon.classList.toggle('hidden', !isCollapsed);
+                    if (collapseText) collapseText.textContent = isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+                    if (collapseBtn) collapseBtn.title = isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+                }
+            }
+
             function routeForgot() { UI.renderForgotPasswordPage(); }
             function routeReset(params) { UI.renderResetPasswordPage(params.token); }
 
@@ -2501,9 +2512,34 @@
                 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
                 // Mobile menu toggle
+                let mobileMenuTimeout;
                 document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-                    document.getElementById('nav-links').classList.toggle('open');
+                    const navLinks = document.getElementById('nav-links');
+                    navLinks.classList.toggle('open');
+                    clearTimeout(mobileMenuTimeout);
+                    if (navLinks.classList.contains('open')) {
+                        mobileMenuTimeout = setTimeout(() => {
+                            navLinks.classList.remove('open');
+                        }, 5000);
+                    }
                 });
+
+                // More Links dropdown
+                const moreLinksBtn = document.getElementById('more-links-btn');
+                const moreLinksMenu = document.getElementById('more-links-menu');
+                if (moreLinksBtn && moreLinksMenu) {
+                    moreLinksBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        moreLinksMenu.classList.toggle('show');
+                        moreLinksBtn.setAttribute('aria-expanded', moreLinksMenu.classList.contains('show'));
+                    });
+                    document.addEventListener('click', (e) => {
+                        if (!moreLinksBtn.contains(e.target) && !moreLinksMenu.contains(e.target)) {
+                            moreLinksMenu.classList.remove('show');
+                            moreLinksBtn.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
 
                 // Global "fresh start" for all hash links and nav menu closing
                 document.addEventListener('click', (e) => {
@@ -2555,6 +2591,9 @@
                 if (!window.location.hash) window.location.hash = '#home';
                 else Router.resolve();
 
+                // Apply sidebar collapse state after route resolves
+                setTimeout(applySidebarCollapse, 0);
+
                 // Initialize AOS animations
                 AOS.init({
                     duration: 600,
@@ -2579,7 +2618,7 @@
                 confirmDeleteUser, deleteUser,
                 onUserSearch, goToUserPage, showUserDetailsModal, updateUserPassword,
                 goToDashboardPage, clearHomeSearch, clearAdminSearch, clearUserSearch,
-                togglePasswordVisibility, toggleAdminSidebar, closeAdminSidebar,
+                togglePasswordVisibility, toggleAdminSidebar, closeAdminSidebar, toggleSidebarCollapse, applySidebarCollapse,
                 switchCoverTab, handleCoverUpload, updateCoverPreview, removeCoverImage
             };
         })();
