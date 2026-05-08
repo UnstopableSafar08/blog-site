@@ -9,8 +9,21 @@ const Comments = (() => {
 
     function formatDate(dStr) {
         if (!dStr) return '';
-        const d = new Date(dStr.replace(' ', 'T'));
-        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        let isoStr = dStr;
+        if (dStr.includes(' ') && !dStr.includes('T')) {
+            isoStr = dStr.replace(' ', 'T');
+        }
+        if (!isoStr.endsWith('Z')) {
+            isoStr += 'Z';
+        }
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return 'Invalid Date';
+        
+        return new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Asia/Kathmandu',
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        }).format(d);
     }
 
     // Render the comments section HTML string
@@ -35,6 +48,10 @@ const Comments = (() => {
         function renderCommentNode(c, depth = 0) {
             const avatar = c.author_picture || 'assets/img/user.gif';
             const paddingLeft = depth > 0 ? (depth > 4 ? 4 : depth) * 32 : 0;
+            const isAdmin = typeof Auth !== 'undefined' && Auth.isAuthenticated();
+            
+            let reactions = {};
+            try { reactions = JSON.parse(c.reactions || '{}'); } catch(e) {}
             
             let html = `
             <div class="comment-item" style="padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; margin-left: ${paddingLeft}px;">
@@ -44,16 +61,22 @@ const Comments = (() => {
                         ${escapeHtml(c.author_name)} 
                         <span style="font-size: 0.8rem; color: var(--text-tertiary); font-weight: 400;">${formatDate(c.created_at)}</span>
                     </div>
+                    ${isAdmin ? `<button onclick="Comments.deleteComment(${c.id}, ${post ? post.id : 'null'}, '${post ? escapeHtml(post.slug || '') : ''}')" style="background: none; border: none; color: #ff4d4f; cursor: pointer; padding: 4px; display: flex; align-items: center;" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>` : ''}
                 </div>
                 <div style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 8px;">${escapeHtml(c.content)}</div>
-                <div style="font-size: 0.8rem;">
-                    <button onclick="Comments.openReplyForm(${c.id}, '${escapeHtml(c.author_name).replace(/'/g, "\\'")}')" style="background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font-weight: bold;">Reply</button>
+                <div style="display: flex; align-items: center; gap: 16px; margin-top: 12px;">
+                    <div class="comment-reactions" style="display: flex; gap: 8px;">
+                        <button onclick="Comments.addReaction(this, ${c.id}, 'like')" style="background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 12px; padding: 2px 8px; cursor: pointer; font-size: 0.85rem;">👍 ${reactions.like || 0}</button>
+                        <button onclick="Comments.addReaction(this, ${c.id}, 'love')" style="background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 12px; padding: 2px 8px; cursor: pointer; font-size: 0.85rem;">❤️ ${reactions.love || 0}</button>
+                        <button onclick="Comments.addReaction(this, ${c.id}, 'sad')" style="background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 12px; padding: 2px 8px; cursor: pointer; font-size: 0.85rem;">😢 ${reactions.sad || 0}</button>
+                        <button onclick="Comments.addReaction(this, ${c.id}, 'unknown')" style="background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 12px; padding: 2px 8px; cursor: pointer; font-size: 0.85rem;">🤷 ${reactions.unknown || 0}</button>
+                    </div>
+                    <button onclick="Comments.openReplyForm(${c.id}, '${escapeHtml(c.author_name).replace(/'/g, "\\'")}')" style="background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font-weight: bold; font-size: 0.8rem;">Reply</button>
                 </div>
             </div>`;
             
             if (c.replies.length > 0) {
-                // If the fetch was DESC, replies might be DESC. usually ascending replies are better
-                c.replies.reverse().forEach(r => {
+                c.replies.forEach(r => {
                     html += renderCommentNode(r, depth + 1);
                 });
             }
@@ -65,7 +88,27 @@ const Comments = (() => {
             : `<p style="color: var(--text-tertiary); font-size: 0.95rem; padding: 16px; background: var(--bg-tertiary); border-radius: 8px; text-align: center;">No comments yet. Be the first to share your thoughts!</p>`;
 
         let inputFormHtml = '';
-        if (window.currentGoogleUser) {
+        const isAdmin = typeof Auth !== 'undefined' && Auth.isAuthenticated();
+
+        if (isAdmin) {
+            const adminName = Auth.getUser().username;
+            inputFormHtml = `
+            <form onsubmit="Comments.submitComment(event, ${post.id}, '${post.slug}')" id="comment-form-container" style="display: flex; flex-direction: column; gap: 16px; background: var(--bg-tertiary); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="comment-form-title" style="margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <img src="assets/img/admins.gif" onerror="this.src='assets/img/user.gif'" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" /> 
+                        Commenting as ${escapeHtml(adminName)} <span class="badge badge-general" style="font-size:0.7rem;"></span>
+                    </h4>
+                    <button type="button" id="cancel-reply-btn" onclick="Comments.cancelReply()" style="display: none; background: none; border: none; color: var(--text-tertiary); cursor: pointer; text-decoration: underline; font-size: 0.8rem;">Cancel Reply</button>
+                </div>
+                <input type="hidden" id="comment-parent-id" value="">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <textarea id="comment-content" class="form-textarea" placeholder="Write your comment here..." rows="3" required style="background: var(--bg-primary);"></textarea>
+                </div>
+                <button type="submit" id="comment-submit-btn" class="btn btn-primary" style="align-self: flex-start; padding-left: 24px; padding-right: 24px;">Post Comment</button>
+            </form>
+            `;
+        } else if (window.currentGoogleUser) {
             inputFormHtml = `
             <form onsubmit="Comments.submitComment(event, ${post.id}, '${post.slug}')" id="comment-form-container" style="display: flex; flex-direction: column; gap: 16px; background: var(--bg-tertiary); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -133,8 +176,12 @@ const Comments = (() => {
         
         let author = '';
         let picture = '';
+        const isAdmin = typeof Auth !== 'undefined' && Auth.isAuthenticated();
         
-        if (window.currentGoogleUser) {
+        if (isAdmin) {
+            author = Auth.getUser().username + ' (Admin)';
+            picture = 'assets/img/admins.gif';
+        } else if (window.currentGoogleUser) {
             author = window.currentGoogleUser.name;
             picture = window.currentGoogleUser.picture;
         } else {
@@ -151,11 +198,12 @@ const Comments = (() => {
         }
         
         try {
-            // Ensure table and new picture/parent_id column exists
-            try { await DB.execute("CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post_id INTEGER, author_name TEXT, author_picture TEXT, content TEXT, parent_id INTEGER, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)", [], true); } catch (err) {}
-            // Migration for older tables missing author_picture or parent_id
+            // Ensure table and new picture/parent_id/reactions column exists
+            try { await DB.execute("CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, post_id INTEGER, author_name TEXT, author_picture TEXT, content TEXT, parent_id INTEGER, reactions TEXT DEFAULT '{}', created_at DATETIME DEFAULT CURRENT_TIMESTAMP)", [], true); } catch (err) {}
+            // Migration for older tables missing author_picture or parent_id or reactions
             try { await DB.execute("ALTER TABLE comments ADD COLUMN author_picture TEXT", [], true); } catch(err) {}
             try { await DB.execute("ALTER TABLE comments ADD COLUMN parent_id INTEGER", [], true); } catch(err) {}
+            try { await DB.execute("ALTER TABLE comments ADD COLUMN reactions TEXT DEFAULT '{}'", [], true); } catch(err) {}
 
             const parentIdVal = document.getElementById('comment-parent-id').value;
             const finalParentId = parentIdVal ? parseInt(parentIdVal, 10) : null;
@@ -164,8 +212,26 @@ const Comments = (() => {
             
             if(typeof UI !== 'undefined') UI.showToast('Comment posted successfully!', 'success');
             
-            // Re-render
-            window.dispatchEvent(new Event('hashchange'));
+            // Dynamically refresh comments area without full page jump
+            const result = await DB.execute("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC", [postId]);
+            const newComments = result.rows || [];
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = Comments.getCommentsHTML(newComments, { id: postId, slug: slug });
+            
+            const newList = tempDiv.querySelector('#comments-list');
+            if (newList) {
+                document.getElementById('comments-list').innerHTML = newList.innerHTML;
+            }
+            
+            const countBadge = document.querySelector('.post-comments h3 .badge-general');
+            const newBadge = tempDiv.querySelector('.post-comments h3 .badge-general');
+            if (countBadge && newBadge) {
+                countBadge.textContent = newBadge.textContent;
+            }
+            
+            cancelReply();
+            document.getElementById('comment-content').value = '';
 
             // Email notification
             if(typeof EmailService !== 'undefined') {
@@ -206,5 +272,80 @@ const Comments = (() => {
         document.getElementById('comment-content').value = '';
     }
 
-    return { getCommentsHTML, submitComment, openReplyForm, cancelReply };
+    async function deleteComment(id, postId, slug) {
+        if (!confirm('Are you sure you want to delete this comment?')) return;
+        try {
+            await DB.execute("DELETE FROM comments WHERE id = ?", [id], true);
+            // also optionally delete replies
+            await DB.execute("DELETE FROM comments WHERE parent_id = ?", [id], true);
+            if(typeof UI !== 'undefined') UI.showToast('Comment deleted', 'success');
+            
+            if (postId) {
+                const result = await DB.execute("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC", [postId]);
+                const newComments = result.rows || [];
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = Comments.getCommentsHTML(newComments, { id: postId, slug: slug || '' });
+                
+                const newList = tempDiv.querySelector('#comments-list');
+                if (newList) {
+                    document.getElementById('comments-list').innerHTML = newList.innerHTML;
+                }
+                
+                const countBadge = document.querySelector('.post-comments h3 .badge-general');
+                const newBadge = tempDiv.querySelector('.post-comments h3 .badge-general');
+                if (countBadge && newBadge) {
+                    countBadge.textContent = newBadge.textContent;
+                }
+            } else {
+                window.dispatchEvent(new Event('hashchange'));
+            }
+        } catch (err) {
+            if(typeof UI !== 'undefined') UI.showToast('Failed to delete comment', 'error');
+        }
+    }
+
+    async function addReaction(elem, id, type) {
+        try {
+            try { await DB.execute("ALTER TABLE comments ADD COLUMN reactions TEXT DEFAULT '{}'", [], true); } catch(err) {}
+
+            const res = await DB.execute("SELECT reactions FROM comments WHERE id = ?", [id]);
+            if (!res.rows.length) return;
+            
+            let reactions = {};
+            try { reactions = JSON.parse(res.rows[0].reactions || '{}'); } catch(e) {}
+            
+            reactions[type] = (reactions[type] || 0) + 1;
+            await DB.execute("UPDATE comments SET reactions = ? WHERE id = ?", [JSON.stringify(reactions), id], true);
+            
+            const emojiMap = { like: '👍', love: '❤️', sad: '😢', unknown: '🤷' };
+            elem.innerHTML = `${emojiMap[type] || ''} ${reactions[type]}`;
+        } catch(err) {
+            console.error('Failed to add reaction', err);
+            if(typeof UI !== 'undefined') UI.showToast('Failed to log reaction', 'error');
+        }
+    }
+
+    async function addPostReaction(elem, id, type) {
+        try {
+            try { await DB.execute("ALTER TABLE posts ADD COLUMN reactions TEXT DEFAULT '{}'", [], true); } catch(err) {}
+            
+            const res = await DB.execute("SELECT reactions FROM posts WHERE id = ?", [id]);
+            if (!res.rows.length) return;
+            
+            let reactions = {};
+            try { reactions = JSON.parse(res.rows[0].reactions || '{}'); } catch(e) {}
+            
+            reactions[type] = (reactions[type] || 0) + 1;
+            await DB.execute("UPDATE posts SET reactions = ? WHERE id = ?", [JSON.stringify(reactions), id], true);
+            
+            const emojiMap = { like: '👍', love: '❤️', sad: '😢', unknown: '🤷' };
+            elem.innerHTML = `${emojiMap[type] || ''} ${reactions[type]}`;
+        } catch(err) {
+            console.error('Failed to add post reaction', err);
+            if(typeof UI !== 'undefined') UI.showToast('Failed to log post reaction', 'error');
+        }
+    }
+
+    return { getCommentsHTML, submitComment, openReplyForm, cancelReply, deleteComment, addReaction, addPostReaction };
 })();
