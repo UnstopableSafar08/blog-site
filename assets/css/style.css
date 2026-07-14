@@ -1374,7 +1374,7 @@ p {
 .post-hero-bg-content {
     position: relative;
     z-index: 1;
-    max-width: min(85%, 1100px);
+    max-width: min(92%, 1300px);
     color: #fff;
     width: 100%
 }
@@ -1434,7 +1434,7 @@ p {
 }
 
 .post-body-wrapper {
-    max-width: min(75%, 960px);
+    max-width: min(92%, 1300px);
     margin: 0 auto;
     padding: 48px 24px
 }
