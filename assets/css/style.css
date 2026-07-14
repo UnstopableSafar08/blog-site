@@ -939,6 +939,19 @@ p {
     padding-bottom: 80px
 }
 
+@media(min-width: 1024px) {
+    .post-view {
+        width: 80%;
+        max-width: 1200px
+    }
+    .post-body-wrapper {
+        max-width: 75%
+    }
+    .post-hero-bg-content {
+        max-width: 85%
+    }
+}
+
 .post-view .post-header {
     text-align: center;
     margin-bottom: 48px
