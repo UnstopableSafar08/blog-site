@@ -933,7 +933,7 @@ p {
 
 /* ---------- Post Reading View ---------- */
 .post-view {
-    width: 85%;
+    width: 80%;
     max-width: 1300px;
     margin: 0 auto;
     padding-top: calc(var(--nav-h) + 48px);
@@ -1434,7 +1434,7 @@ p {
 }
 
 .post-body-wrapper {
-    max-width: min(92%, 1300px);
+    width: 80%;
     margin: 0 auto;
     padding: 48px 24px
 }
