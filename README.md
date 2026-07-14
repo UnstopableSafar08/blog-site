@@ -93,6 +93,38 @@ This project uses **GitHub Actions** to securely inject credentials during the b
 
 ---
 
+## ▲ Vercel Deployment
+
+Alternatively, deploy on Vercel with the same env vars:
+
+### 1. Create `build.sh` in the project root
+
+```bash
+#!/bin/bash
+sed -i "s|__TURSO_DB_URL__|$TURSO_DB_URL|g" assets/js/core.js
+sed -i "s|__TURSO_READ_TOKEN__|$TURSO_READ_TOKEN|g" assets/js/core.js
+sed -i "s|__TURSO_FULL_TOKEN__|$TURSO_FULL_TOKEN|g" assets/js/core.js
+sed -i "s|__EMAILJS_PUBLIC_KEY__|$EMAILJS_PUBLIC_KEY|g" assets/js/core.js
+sed -i "s|__EMAILJS_SERVICE_ID__|$EMAILJS_SERVICE_ID|g" assets/js/core.js
+sed -i "s|__EMAILJS_TEMPLATE_ID__|$EMAILJS_TEMPLATE_ID|g" assets/js/core.js
+```
+
+### 2. Create `vercel.json` in the project root
+
+```json
+{
+  "buildCommand": "bash build.sh",
+  "outputDirectory": "."
+}
+```
+
+### 3. Configure Environment Variables
+In the **Vercel Dashboard** → Project Settings → Environment Variables, add the same 6 variables listed above (`TURSO_DB_URL`, `TURSO_READ_TOKEN`, etc.).
+
+Then import your GitHub repo on Vercel — it will auto-detect the config and deploy.
+
+---
+
 ## 👤 Author
 
 **Sagar Malla**
